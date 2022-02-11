@@ -1,0 +1,64 @@
+Entering 'modules/Ogg'
+https://github.com/jozefchutka/Ogg
+e1774cd77f471443541596e09078e78fdc342e4f
+
+Entering 'modules/emsdk'
+https://github.com/emscripten-core/emsdk.git
+447aa44d78580b1e3520f195ed49a6efd3ffed67
+
+Entering 'modules/fdk-aac'
+https://github.com/jozefchutka/fdk-aac
+801f67f671929311e0c9952c5f92d6e147c7b003
+
+Entering 'modules/ffmpeg'
+https://github.com/jozefchutka/ffmpeg
+0dcb4f9833af611aba5904b885ed18786413c9fc
+
+Entering 'modules/lame'
+https://github.com/jozefchutka/lame
+2badea1974ae36cb8312afe99cff1e6b3b5decee
+
+Entering 'modules/libsamplerate'
+https://github.com/jozefchutka/libsamplerate
+c96f5e3de9c4488f4e6c97f59f5245f22fda22f7
+
+Entering 'modules/libsndfile'
+https://github.com/jozefchutka/libsndfile
+d60deb5d8691997b6bb28d88e3b43f322073d146
+
+Entering 'modules/libvpx'
+https://github.com/jozefchutka/libvpx
+626ff35955c2c35b806b3e0ecf551a1a8611cdbf
+
+Entering 'modules/libwebp'
+https://github.com/jozefchutka/libwebp
+fedac6cc69cda3e9e04b780d324cf03921fb3ff4
+
+Entering 'modules/opus'
+https://github.com/jozefchutka/opus
+a8e6a77c5fe0c37aa6788f939f24f8cd22ae2652
+
+Entering 'modules/rubberband'
+https://github.com/jozefchutka/rubberband
+6c359b7cd0ef704b38f4fb91904cec999fb73ef3
+
+Entering 'modules/theora'
+https://github.com/jozefchutka/theora
+7180717276af1ebc7da15c83162d6c5d6203aabf
+
+Entering 'modules/vorbis'
+https://github.com/jozefchutka/vorbis
+fb1ff6fcaa7ec3d7b128142996efbdd064cf8850
+
+Entering 'modules/x264'
+https://github.com/jozefchutka/x264
+64f6a907b60fed93b49285a6cd19a90d1f0d009c
+
+Entering 'modules/x265'
+https://github.com/jozefchutka/x265
+5a4857d9a963ef93a3cabbf4e97d0d4039ebcac9
+
+Entering 'modules/zlib'
+https://github.com/jozefchutka/zlib
+cacf7f1d4e3d44d871b605da3b647f07d718623f
+

@@ -1,0 +1,4 @@
+<Files *.gz>
+	RemoveEncoding .gz
+	AddType application/gzip .gz
+</Files>

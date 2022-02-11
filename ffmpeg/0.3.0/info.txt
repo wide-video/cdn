@@ -1,0 +1,72 @@
+emcc -I. -I./fftools -I/home/jozefchutka/yscene-ffmpeg/build/include -Llibavcodec -Llibavdevice -Llibavfilter -Llibavformat -Llibavresample -Llibavutil -Llibpostproc -Llibswscale -Llibswresample -Lrubberband -Lsamplerate -Lflite -L/home/jozefchutka/yscene-ffmpeg/build/lib -Wno-deprecated-declarations -Wno-pointer-sign -Wno-implicit-int-float-conversion -Wno-switch -Wno-parentheses -Qunused-arguments -lavdevice -lavfilter -lavformat -lavcodec -lswresample -lswscale -lavutil -lpostproc -lm -lx264 -lx265 -lvpx -lmp3lame -lvorbis -lvorbisenc -lvorbisfile -logg -ltheora -ltheoraenc -ltheoradec -lz -lopus -lwebp -lrubberband -lsamplerate fftools/ffmpeg_opt.c fftools/ffmpeg_filter.c fftools/ffmpeg_hw.c fftools/cmdutils.c fftools/ffmpeg.c -lworkerfs.js -s USE_SDL=2 -s INVOKE_RUN=0 -s EXIT_RUNTIME=1 -s MODULARIZE=1 -s EXPORT_NAME=createFFmpeg -s EXPORTED_FUNCTIONS=[_main, ___wasm_init_memory_flag] -s EXPORTED_RUNTIME_METHODS=[callMain, FS, WORKERFS] -s INITIAL_MEMORY=128mb -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4gb -s ENVIRONMENT=worker -s USE_PTHREADS=1 -s PROXY_TO_PTHREAD=1 -msimd128 -pthread -O3 -o /home/jozefchutka/yscene-ffmpeg/build/wasm/ffmpeg.js
+
+git@github.com:jozefchutka/yscene-ffmpeg.git
+94428b04e9d49a24b78fb8bd4d18ad5c6444f726
+
+EMCC (emcc -v)
+emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.2 (a77b559a8b40b7e89fc8c17e41034128df9543e4)
+clang version 14.0.0 (https://github.com/llvm/llvm-project 782c0dd1a1c235afb09a34e7da4a1267ead14765)
+Target: wasm32-unknown-emscripten
+Thread model: posix
+InstalledDir: /home/jozefchutka/yscene-ffmpeg/modules/emsdk/upstream/bin
+
+Entering 'modules/Ogg'
+https://github.com/jozefchutka/Ogg
+e1774cd77f471443541596e09078e78fdc342e4f
+
+Entering 'modules/emsdk'
+https://github.com/emscripten-core/emsdk.git
+476a14d60d0d25ff5a1bfee18af73a4b9bfbd385
+
+Entering 'modules/ffmpeg'
+https://github.com/jozefchutka/ffmpeg
+618860ad69d618022a81497a1c130903fcfcf6b8
+
+Entering 'modules/lame'
+https://github.com/jozefchutka/lame
+2badea1974ae36cb8312afe99cff1e6b3b5decee
+
+Entering 'modules/libsamplerate'
+https://github.com/jozefchutka/libsamplerate
+c96f5e3de9c4488f4e6c97f59f5245f22fda22f7
+
+Entering 'modules/libsndfile'
+https://github.com/jozefchutka/libsndfile
+d60deb5d8691997b6bb28d88e3b43f322073d146
+
+Entering 'modules/libvpx'
+https://github.com/jozefchutka/libvpx
+626ff35955c2c35b806b3e0ecf551a1a8611cdbf
+
+Entering 'modules/libwebp'
+https://github.com/jozefchutka/libwebp
+fedac6cc69cda3e9e04b780d324cf03921fb3ff4
+
+Entering 'modules/opus'
+https://github.com/jozefchutka/opus
+a8e6a77c5fe0c37aa6788f939f24f8cd22ae2652
+
+Entering 'modules/rubberband'
+https://github.com/jozefchutka/rubberband
+6c359b7cd0ef704b38f4fb91904cec999fb73ef3
+
+Entering 'modules/theora'
+https://github.com/jozefchutka/theora
+7180717276af1ebc7da15c83162d6c5d6203aabf
+
+Entering 'modules/vorbis'
+https://github.com/jozefchutka/vorbis
+fb1ff6fcaa7ec3d7b128142996efbdd064cf8850
+
+Entering 'modules/x264'
+https://github.com/jozefchutka/x264
+64f6a907b60fed93b49285a6cd19a90d1f0d009c
+
+Entering 'modules/x265'
+https://github.com/jozefchutka/x265
+5a4857d9a963ef93a3cabbf4e97d0d4039ebcac9
+
+Entering 'modules/zlib'
+https://github.com/jozefchutka/zlib
+cacf7f1d4e3d44d871b605da3b647f07d718623f
+
