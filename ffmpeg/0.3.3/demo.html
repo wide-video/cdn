@@ -7,7 +7,7 @@
 if(typeof SharedArrayBuffer === "undefined")
 	return document.body.innerHTML = "SharedArrayBuffer is not available. Run <code style='background:#ccc'>chrome --enable-features=SharedArrayBuffer</code> or follow <a href='https://web.dev/cross-origin-isolation-guide/'>A guide to enable cross-origin isolation</a>.";
 
-const fetchGZ = async url => await new Response((await (await fetch(url)).blob()).stream().pipeThrough(new DecompressionStream("gzip"))).blob();
+const fetchGZ = async url => await new Response((await fetch(url)).body.pipeThrough(new DecompressionStream("gzip"))).blob();
 
 const wasmUrl = URL.createObjectURL(new Blob([await fetchGZ("ffmpeg.wasm.gz")], {type:"application/wasm"}));
 const ffmpegUrl = URL.createObjectURL(await fetchGZ("ffmpeg.js.gz"));
