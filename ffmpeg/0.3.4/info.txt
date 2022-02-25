@@ -1,7 +1,7 @@
-emcc -O3 -I/home/jozefchutka/ffmpeg-wasm/build/include -s USE_PTHREADS=1 -msimd128 -I. -I./fftools -I/home/jozefchutka/ffmpeg-wasm/build/include -Llibavcodec -Llibavdevice -Llibavfilter -Llibavformat -Llibavresample -Llibavutil -Llibpostproc -Llibswscale -Llibswresample -Lrubberband -Lsamplerate -Lflite -L/home/jozefchutka/ffmpeg-wasm/build/lib -Wno-deprecated-declarations -Wno-pointer-sign -Wno-implicit-int-float-conversion -Wno-switch -Wno-parentheses -Qunused-arguments -lavdevice -lavfilter -lavformat -lavcodec -lswresample -lswscale -lavutil -lpostproc -lm -lx264 -lx265 -lvpx -lmp3lame -lvorbis -lvorbisenc -lvorbisfile -logg -ltheora -ltheoraenc -ltheoradec -lz -lopus -lwebp -lwebpmux -lrubberband -lsamplerate fftools/ffmpeg_opt.c fftools/ffmpeg_filter.c fftools/ffmpeg_hw.c fftools/cmdutils.c fftools/ffmpeg.c -lworkerfs.js -s USE_SDL=2 -s INVOKE_RUN=0 -s EXIT_RUNTIME=1 -s MODULARIZE=1 -s EXPORT_NAME=createFFmpeg -s EXPORTED_FUNCTIONS=[_main, ___wasm_init_memory_flag] -s EXPORTED_RUNTIME_METHODS=[callMain, FS, WORKERFS] -s INITIAL_MEMORY=128mb -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4gb -s ENVIRONMENT=worker -s PROXY_TO_PTHREAD=1 -s PTHREAD_POOL_SIZE=Math.min(4, navigator.hardwareConcurrency) -s PTHREAD_POOL_SIZE_STRICT=2 -pthread -o /home/jozefchutka/ffmpeg-wasm/build/wasm/ffmpeg.js
+emcc -O3 -I/home/jozefchutka/ffmpeg-wasm/build/include -s USE_PTHREADS=1 -msimd128 -I. -I./fftools -I/home/jozefchutka/ffmpeg-wasm/build/include -Llibavcodec -Llibavdevice -Llibavfilter -Llibavformat -Llibavresample -Llibavutil -Llibpostproc -Llibswscale -Llibswresample -Lrubberband -Lsamplerate -Lflite -L/home/jozefchutka/ffmpeg-wasm/build/lib -Wno-deprecated-declarations -Wno-pointer-sign -Wno-implicit-int-float-conversion -Wno-switch -Wno-parentheses -Qunused-arguments -lavdevice -lavfilter -lavformat -lavcodec -lswresample -lswscale -lavutil -lpostproc -lm -lx264 -lx265 -lvpx -lmp3lame -lvorbis -lvorbisenc -lvorbisfile -logg -ltheora -ltheoraenc -ltheoradec -lz -lopus -lwebp -lwebpmux -lrubberband -lsamplerate fftools/ffmpeg_opt.c fftools/ffmpeg_filter.c fftools/ffmpeg_hw.c fftools/cmdutils.c fftools/ffmpeg.c -lworkerfs.js -s USE_SDL=2 -s INVOKE_RUN=0 -s EXIT_RUNTIME=1 -s MODULARIZE=1 -s EXPORT_NAME=createFFmpeg -s EXPORTED_FUNCTIONS=[_main, ___wasm_init_memory_flag] -s EXPORTED_RUNTIME_METHODS=[callMain, FS, WORKERFS] -s INITIAL_MEMORY=128mb -s ALLOW_MEMORY_GROWTH=1 -s MAXIMUM_MEMORY=4gb -s ENVIRONMENT=worker -s PROXY_TO_PTHREAD=1 -pthread -o /home/jozefchutka/ffmpeg-wasm/build/wasm/ffmpeg.js
 
 git@github.com:wide-video/ffmpeg-wasm.git
-04e8dde0259d2bb3f322e65cf59cad7f9a74ff6b
+49f188e1cc1254c82c722dcb75bf17ab9b6e8881
 
 EMCC (emcc -v)
 emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 3.1.5 (d33328b22db1aa62a51c50731e9645951a2038bc)
@@ -20,7 +20,7 @@ fd08e9ad243184e154e987c10cd0c074a9a9d60e
 
 Entering 'modules/ffmpeg'
 https://github.com/wide-video/ffmpeg
-17923c735110a213d79d8ffae35a43ea9c5c12ad
+7fe503413e668171a16e839c7c70bf92332828b2
 
 Entering 'modules/lame'
 https://github.com/wide-video/lame
