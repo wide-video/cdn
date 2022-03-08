@@ -1,0 +1,45 @@
+<body>
+<audio autoplay controls></audio>
+<p>Watch console log.</p>
+<script>
+(async () => {
+
+const fetchGZ = async url => await new Response((await fetch(url)).body.pipeThrough(new DecompressionStream("gzip"))).blob();
+
+const wasmUrl = URL.createObjectURL(new Blob([await fetchGZ("flite.wasm.gz")], {type:"application/wasm"}));
+const fliteUrl = URL.createObjectURL(await fetchGZ("flite.js.gz"));
+const vox = await fetchGZ("cmu_us_fem-large.flitevox.gz");
+const text = "Flite is an open source small fast run-time text to speech engine. It is the latest addition to the suite of free software synthesis tools including University of Edinburgh's Festival Speech Synthesis System and Carnegie Mellon University's FestVox project, tools, scripts and documentation for building synthetic voices.";
+
+const worker = new Worker(URL.createObjectURL(new Blob([`
+	self.addEventListener("message", async (event) => {
+		const {text, wasmUrl, fliteUrl, vox} = event.data;
+		importScripts(fliteUrl);
+		const voiceFilename = "voice.flitevox";
+		const textFilename = "text.txt";
+		const outputFilename = "out.wav";
+		const module = await createFlite({
+			printErr:console.log,
+			locateFile:path => {
+				if(path === "flite.wasm") return wasmUrl;
+				return path;}});
+console.log(vox, voiceFilename);
+		module.FS.writeFile(voiceFilename, new Uint8Array(await vox.arrayBuffer()));
+		module.FS.writeFile(textFilename, text);
+		module.callMain(["-voice", voiceFilename, textFilename, outputFilename]);
+		
+		const content = module.FS.readFile(outputFilename);
+		self.postMessage(content.buffer, [content.buffer])
+	});
+`])));
+worker.onmessage = event => {
+	const audio = document.querySelector("audio");
+	const blob = new Blob([new Uint8Array(event.data)]);
+	audio.src = URL.createObjectURL(blob);
+	worker.terminate();
+}
+worker.postMessage({text, wasmUrl, fliteUrl, vox});
+
+})()
+</script>
+</body>
