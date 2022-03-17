@@ -50,3 +50,5 @@ curl http://ftp.nluug.nl/pub/graphics/blender/demo/movies/ToS/tears_of_steel_108
 ffmpeg -ss 555 -i tos_h264_1920x800_24fps_mp3_stereo_734s_583MB.mov -vf "scale=1280:-2" -t 10 -c:v libx264 -pix_fmt:v yuv420p -preset:v veryslow -c:a aac -ac 2 -f mp4 -movflags +faststart -y tos_h264_1280x534_24fps_aac_stereo_10s_5MB.mp4
 
 ffmpeg -i tos_h264_1920x800_24fps_mp3_stereo_734s_583MB.mov -vf "scale=640:-2" -c:v libx265 -b:v 120k -pix_fmt:v yuv420p -c:a aac -ac 2 -f mp4 -y tos_h264_640x266_aac_stereo_734s_23MB.mp4
+
+curl https://download.blender.org/demo/movies/ToS/subtitles/TOS-en.srt --output tos_en_0MB.srt
