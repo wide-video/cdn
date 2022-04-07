@@ -12,7 +12,10 @@ ffmpeg -i rotator_gif_500x500_0MB.gif -c libvpx -pix_fmt yuva420p -auto-alt-ref 
 
 curl https://files.freemusicarchive.org/storage-freemusicarchive-org/music/Creative_Commons/Sean_Fournier/Sean_Fournier_-_Singles/Sean_Fournier_-_06_-_Falling_For_You_Piano_Version.mp3 --output sf_mp3_stereo_203s_4MB.mp3
 
-ffmpeg -i sf_mp3_stereo_203s_4MB.mp3 -vn -acodec aac sf_aac_stereo_218s_3MB.aac
+REM .aac does not exist https://trac.ffmpeg.org/ticket/9708
+REM ffmpeg -i sf_mp3_stereo_203s_4MB.mp3 -vn -acodec aac sf_aac_stereo_218s_3MB.aac
+
+ffmpeg -i sf_mp3_stereo_203s_4MB.mp3 -vn -acodec aac sf_aac_stereo_203s_3MB.m4a
 
 curl http://ftp.nluug.nl/pub/graphics/blender/demo/movies/BBB/bbb_sunflower_1080p_60fps_normal.mp4 --output bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4
 
