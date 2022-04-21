@@ -30,6 +30,8 @@ ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -t 30
 
 ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "fps=25,scale=1280x720" -t 30 -c:v libx264 -pix_fmt:v yuv420p -crf:v 23 -profile:v high -preset:v veryslow -c:a aac -ac 6 -f mp4 -movflags +faststart -y bbb_h264_1280x720_25fps_aac_51_30s_5MB.mp4
 
+ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "fps=25,scale=640x360" -t 5 -c:v libaom-av1 -c:a aac -ac 2 -f mp4 -movflags +faststart -y bbb_av1_640x360_25fps_aac_stereo_5s_0MB.mp4
+
 curl http://ftp.nluug.nl/pub/graphics/blender/demo/movies/Sintel.2010.1080p.mkv --output sintel_h264_1920x818_24fps_ac3_51_888s_1172MB.mkv
 
 ffmpeg -ss 120 -i sintel_h264_1920x818_24fps_ac3_51_888s_1172MB.mkv -c:v libx264 -pix_fmt:v yuv420p -crf:v 23 -profile:v high -preset:v veryslow -c:a aac -ac 2 -f mp4 -movflags +faststart -t 30 -y sintel_h264_1920x818_24fps_aac_stereo_30s_6MB.mp4
