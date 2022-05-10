@@ -60,3 +60,5 @@ REM ffmpeg -i tos_h264_1920x800_24fps_mp3_stereo_734s_583MB.mov -vf "scale=640:-
 ffmpeg -i tos_h264_1920x800_24fps_mp3_stereo_734s_583MB.mov -vf "scale=640:-2" -c:v libx265 -b:v 120k -pix_fmt:v yuv420p -c:a aac -ac 2 -f mp4 -y tos_h265_640x266_aac_stereo_734s_23MB.mp4
 
 curl https://download.blender.org/demo/movies/ToS/subtitles/TOS-en.srt --output tos_en_0MB.srt
+
+curl http://ftp.nluug.nl/pub/graphics/blender/demo/movies/BBB/bbb_sunflower_2160p_60fps_normal.mp4 --output bbb_h264_3840x2160_60fps_mp3_stereo_ac3_51_634s_673MB.mp4
