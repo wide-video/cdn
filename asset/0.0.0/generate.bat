@@ -62,3 +62,6 @@ ffmpeg -i tos_h264_1920x800_24fps_mp3_stereo_734s_583MB.mov -vf "scale=640:-2" -
 curl https://download.blender.org/demo/movies/ToS/subtitles/TOS-en.srt --output tos_en_0MB.srt
 
 curl http://ftp.nluug.nl/pub/graphics/blender/demo/movies/BBB/bbb_sunflower_2160p_60fps_normal.mp4 --output bbb_h264_3840x2160_60fps_mp3_stereo_ac3_51_634s_673MB.mp4
+
+copy sintel_vp8_1920x818_24fps_vorbis_stereo_30s_1MB.webm "sintel_vp8_1920x818_24fps_vorbis_stereo_30s_1MB_chars čř.webm"
+copy sf_aac_stereo_203s_3MB.m4a "sf_aac_stereo_203s_3MB_chars čř.m4a"
