@@ -2,6 +2,8 @@ echo invalid media > invalid.txt
 
 ffmpeg -hide_banner -filter_complex "smptehdbars=size=1280x720:rate=30000/1001,drawtext=fontfile=c\\:/Windows/Fonts/arial.ttf:timecode=00\\:00\\:00.00:rate=30000/1001:fontsize=72:fontcolor=white:x=(w-tw)/2:y=10*h/100:box=1:boxcolor=0x00000000@1[vout];sine=frequency=440:sample_rate=48000:beep_factor=2[aout]" -map [vout] -map [aout] -t 00:01:00.000 -c:v libx264 -pix_fmt:v yuv420p -crf:v 23 -profile:v high -preset:v veryslow -c:a aac -ac 2 -f mp4 -movflags +faststart -y "bars_h264_1280x720_30fps_aac_stereo_60s_1MB.mp4"
 
+ffmpeg -hide_banner -filter_complex "smptehdbars=size=400x120:rate=60,drawtext=fontfile=c\\:/Windows/Fonts/arial.ttf:timecode=00\\:00\\:00.00:rate=60:fontsize=72:fontcolor=white:x=(w-tw)/2:y=(h-th)/2:box=1:boxcolor=0x00000000@1;sine=frequency=440:sample_rate=48000:beep_factor=2" -t 60 -c:v libx264 -pix_fmt:v yuv420p -crf:v 23 -profile:v high -preset:v veryslow -c:a aac -ac 2 -f mp4 -movflags +faststart -y bars_h264_400x120_60fps_aac_stereo_60s_1MB.mp4
+
 ffmpeg -hide_banner -filter_complex "sine=frequency=440:sample_rate=48000:beep_factor=2" -t 00:01:00.000 -c:a aac -ac 2 "beep_aac_stereo_60s_0MB.aac"
 
 ffmpeg -f lavfi -i color=color=ff0000:size=512x512:rate=240 -f lavfi -i color=color=00000000:size=512x512:rate=240 -filter_complex "[1]drawbox=x=0:y=(ih-60)/2:width=iw:height=60:color=00ff00:thickness=60,rotate=n/240*PI[r];[0][r]overlay" -f lavfi -i sine=frequency=440:sample_rate=48000:beep_factor=2 -t 00:01:00.000 -c:v libx264 -pix_fmt:v yuv420p -crf:v 23 -profile:v high -preset:v veryslow -c:a aac -ac 2 -f mp4 -movflags +faststart -y  rotator_h264_512x512_240fps_aac_stereo_60s_6MB.mp4 -y
