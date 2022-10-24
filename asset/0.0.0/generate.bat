@@ -23,6 +23,8 @@ curl http://ftp.nluug.nl/pub/graphics/blender/demo/movies/BBB/bbb_sunflower_1080
 
 ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "fps=30,scale=1280x720" -t 30 -c:v libx264 -pix_fmt:v yuv420p -crf:v 23 -profile:v high -preset:v veryslow -c:a aac -ac 2 -f mp4 -movflags +faststart -y bbb_h264_1280x720_30fps_aac_stereo_30s_4MB.mp4
 
+ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "fps=30,scale=86x48" -t 30 -c:v libx264 -pix_fmt:v yuv420p -crf:v 23 -profile:v high -preset:v veryslow -c:a aac -ac 2 -f mp4 -movflags +faststart -y bbb_h264_86x48_30fps_aac_stereo_30s_0MB.mp4
+
 ffmpeg -ss 306 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "scale=960x540" -t 20 -c:v libx264 -pix_fmt:v yuv420p -preset:v veryslow -c:a copy -ac 2 -f mp4 -movflags +faststart -y bbb_h264_960x540_60fps_mp3_stereo_20s_4MB.mp4
 
 ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "fps=10" -t 30 -c:v libx264 -pix_fmt:v yuv420p -crf:v 23 -profile:v high -preset:v veryslow -c:a aac -ac 2 -f mp4 -movflags +faststart -y bbb_h264_1920x1080_10fps_aac_stereo_30s_7MB.mp4
@@ -66,3 +68,13 @@ curl http://ftp.nluug.nl/pub/graphics/blender/demo/movies/BBB/bbb_sunflower_2160
 
 copy sintel_vp8_1920x818_24fps_vorbis_stereo_30s_1MB.webm "sintel_vp8_1920x818_24fps_vorbis_stereo_30s_1MB_chars čř.webm"
 copy sf_aac_stereo_203s_3MB.m4a "sf_aac_stereo_203s_3MB_chars čř.m4a"
+
+REM curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_0.jpg --output rotated_jpeg_1200x1800_0_0MB.jpg
+REM curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_1.jpg --output rotated_jpeg_1200x1800_1_0MB.jpg
+REM curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_2.jpg --output rotated_jpeg_1200x1800_2_0MB.jpg
+REM curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_3.jpg --output rotated_jpeg_1200x1800_3_0MB.jpg
+REM curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_4.jpg --output rotated_jpeg_1200x1800_4_0MB.jpg
+REM curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_5.jpg --output rotated_jpeg_1200x1800_5_0MB.jpg
+REM curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_6.jpg --output rotated_jpeg_1200x1800_6_0MB.jpg
+REM curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_7.jpg --output rotated_jpeg_1200x1800_7_0MB.jpg
+REM curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_8.jpg --output rotated_jpeg_1200x1800_8_0MB.jpg
