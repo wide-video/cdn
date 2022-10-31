@@ -1,4 +1,19 @@
-<Files *.gz>
-	RemoveEncoding .gz
-	AddType application/gzip .gz
-</Files>
+Header set Access-Control-Expose-Headers *
+Header set Access-Control-Allow-Origin *
+Header set Cross-Origin-Opener-Policy same-origin
+Header set Cross-Origin-Embedder-Policy require-corp
+
+RewriteEngine On
+
+RewriteCond %{HTTP:Accept-encoding} br
+RewriteCond %{REQUEST_FILENAME}\.br -s
+RewriteRule ^(.*) $1\.br [QSA]
+
+RewriteRule \.exe\.br$ - [E=no-gzip,E=no-brotli]
+RewriteRule \.js\.br$ - [T=text/javascript,E=no-gzip,E=no-brotli]
+RewriteRule \.wasm\.br$ - [T=application/wasm,E=no-gzip,E=no-brotli]
+
+<FilesMatch "(\.br)$">
+	Header set Content-Encoding br
+	Header append Vary Accept-Encoding
+</FilesMatch>

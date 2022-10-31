@@ -1,0 +1,13 @@
+ 
+<FilesMatch "(cmu_us_fem-large.flitevox\.br)$"> 
+Header set x-content-length 12559266 
+</FilesMatch> 
+<FilesMatch "(cmu_us_slt-large.flitevox\.br)$"> 
+Header set x-content-length 23681917 
+</FilesMatch> 
+<FilesMatch "(flite.js\.br)$"> 
+Header set x-content-length 70023 
+</FilesMatch> 
+<FilesMatch "(flite.wasm\.br)$"> 
+Header set x-content-length 770770 
+</FilesMatch> 

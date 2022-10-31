@@ -1,0 +1,13 @@
+
+<FilesMatch "(ffmpeg.exe\.br)$"> 
+Header set x-content-length 107346944 
+</FilesMatch> 
+<FilesMatch "(ffmpeg.js\.br)$"> 
+Header set x-content-length 135931 
+</FilesMatch> 
+<FilesMatch "(ffmpeg.worker.js\.br)$"> 
+Header set x-content-length 2260 
+</FilesMatch> 
+<FilesMatch "(ffmpeg.wasm\.br)$"> 
+Header set x-content-length 35946042 
+</FilesMatch> 
