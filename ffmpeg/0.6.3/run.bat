@@ -15,18 +15,26 @@ IF NOT EXIST ffmpeg.exe (
 	EXIT
 )
 
+IF NOT EXIST .htaccess (
+	ECHO .htaccess not found
+	PAUSE
+	EXIT
+)
+
 7z x wasm.tar.gz -aoa
 DEL wasm.tar.gz
 
 7z x wasm.tar -aoa
 DEL wasm.tar
 
-ECHO. > .htaccess
+ECHO. >> .htaccess
+ECHO # Generated extra >> .htaccess
+
 for /r %%i in (*.exe, *.js, *.wasm) do (
 	brotli %%i -o %%i.br -Z -f
 
 	ECHO ^<FilesMatch "(%%~nxi\.br)$"^> >> .htaccess
-	ECHO Header set x-content-length %%~zi >> .htaccess
+	ECHO 	Header set x-content-length %%~zi >> .htaccess
 	ECHO ^</FilesMatch^> >> .htaccess
 
 	DEL %%i
