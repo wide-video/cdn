@@ -1,3 +1,4 @@
+Header set Access-Control-Allow-Headers: *
 Header set Access-Control-Allow-Origin *
 Header set Access-Control-Expose-Headers *
 Header set Cache-Control "public, max-age=604800, s-maxage=604800, immutable"
