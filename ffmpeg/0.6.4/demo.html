@@ -4,7 +4,6 @@
 <script id="worker" type="javascript/worker">
 
 // workaround for safari
-
 if(!("Worker" in self)) {
 	class Worker extends EventTarget {
 		static id = 0;
@@ -59,14 +58,10 @@ if(typeof SharedArrayBuffer === "undefined")
 const wasmUrl = new URL("ffmpeg.wasm", document.location).href;
 const ffmpegUrl = new URL("ffmpeg.js", document.location).href;
 const ffmpegWorkerUrl = new URL("ffmpeg.worker.js", document.location).href;
-//const args = ["-filter_complex", "smptehdbars=size=320x240:rate=30000/1001;sine=frequency=440:sample_rate=48000:beep_factor=2", "-c:v", "libopenh264", "-t", "5", "out.mp4"];
 const args = ["-filter_complex", "smptehdbars=size=320x240:rate=30000/1001;sine=frequency=440:sample_rate=48000:beep_factor=2",
 	"-c:v", "libopenh264", "-pix_fmt:v", "yuv420p", "-profile:v", "high",
 	"-c:a", "aac", "-ac", "2",
 	"-t", "5", "out.mp4", "-movflags", "+faststart"];
-
-//ffmpeg -hide_banner -filter_complex "smptehdbars=size=400x120:rate=60,drawtext=fontfile=c\\:/Windows/Fonts/arial.ttf:timecode=00\\:00\\:00.00:rate=60:fontsize=72:fontcolor=white:x=(w-tw)/2:y=(h-th)/2:box=1:boxcolor=0x00000000@1;sine=frequency=440:sample_rate=48000:beep_factor=2" -t 60 -c:v libx264 -pix_fmt:v yuv420p -crf:v 23 -profile:v high -preset:v veryslow -c:a aac -ac 2 -f mp4 -movflags +faststart -y bars_h264_400x120_60fps_aac_stereo_60s_1MB.mp4
-
 
 const workerBlob = new Blob([document.querySelector('#worker').textContent], {type:"text/javascript"});
 const worker = new Worker(URL.createObjectURL(workerBlob));
@@ -97,7 +92,6 @@ worker.onmessage = event => {
 	}
 	
 	const video = document.querySelector("video");
-	console.log(event.data);
 	video.src = URL.createObjectURL(event.data);
 	worker.terminate();
 }
