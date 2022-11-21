@@ -27,7 +27,7 @@ DEL wasm.tar
 ECHO. >> .htaccess
 ECHO # Generated extra >> .htaccess
 
-for /r %%i in (*.exe, *.js, *.wasm) do (
+for /r %%i in (ffmpeg-mac, *.exe, *.js, *.wasm) do (
 	brotli %%i -o %%i.br -Z -f
 
 	ECHO ^<FilesMatch "(%%~nxi\.br)$"^> >> .htaccess

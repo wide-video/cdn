@@ -42,3 +42,6 @@ RewriteRule \.wasm\.br$ - [T=application/wasm,E=no-gzip,E=no-brotli]
 <FilesMatch "(ffmpeg.wasm\.br)$"> 
 	Header set x-content-length 25466546 
 </FilesMatch> 
+<FilesMatch "(ffmpeg-mac\.br)$"> 
+	Header set x-content-length 78436404 
+</FilesMatch> 
