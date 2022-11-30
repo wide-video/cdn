@@ -25,7 +25,7 @@ ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "
 
 ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "fps=30,scale=86x48" -t 30 -c:v libx264 -pix_fmt:v yuv420p -crf:v 23 -profile:v high -preset:v veryslow -c:a aac -ac 2 -f mp4 -movflags +faststart -y bbb_h264_86x48_30fps_aac_stereo_30s_0MB.mp4
 
-ffmpeg -ss 306 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "scale=960x540" -t 20 -c:v libx264 -pix_fmt:v yuv420p -preset:v veryslow -c:a copy -ac 2 -f mp4 -movflags +faststart -y bbb_h264_960x540_60fps_mp3_stereo_20s_4MB.mp4
+ffmpeg -ss 306 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "scale=960x540" -t 20 -c:v libx264 -pix_fmt:v yuv420p -preset:v veryslow -c:a copy -ac 2 -f mp4 -movflags +faststart -y bbb_h264_960x540_60fps_ac3_51_20s_4MB.mp4
 
 ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "fps=10" -t 30 -c:v libx264 -pix_fmt:v yuv420p -crf:v 23 -profile:v high -preset:v veryslow -c:a aac -ac 2 -f mp4 -movflags +faststart -y bbb_h264_1920x1080_10fps_aac_stereo_30s_7MB.mp4
 
