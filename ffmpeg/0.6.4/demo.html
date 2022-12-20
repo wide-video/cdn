@@ -2,52 +2,22 @@
 <video autoplay controls></video>
 <p>Watch console log.</p>
 <script id="worker" type="javascript/worker">
-
-// workaround for safari
-if(!("Worker" in self)) {
-	class Worker extends EventTarget {
-		static id = 0;
-		static subworkers = new Map();
-		constructor(url) {
-			super();
-			this.id = Worker.id++;
-			self.postMessage({kind:"subworker", id:this.id, cmd:"create", url});
-			Worker.subworkers.set(this.id, this);
-		}
-		
-		postMessage(data) {
-			self.postMessage({kind:"subworker", id:this.id, cmd:"postMessage", data});
-		}
-		
-		terminate() {
-			self.postMessage({kind:"subworker", id:this.id, cmd:"terminate"});
-			Worker.subworkers.delete(this.id);
-		}
-	}
-	self.Worker = Worker;
-}
-
-self.addEventListener("message", async (event) => {
-	const data = event.data;
-	if(data.kind === "subworker" && data.cmd === "event")
-		return Worker.subworkers.get(data.id).onmessage(new MessageEvent(data.type, {data:data.data}));
-
+self.onmessage = async (event) => {
 	const {args, wasmUrl, ffmpegUrl, ffmpegWorkerUrl} = event.data;
 	importScripts(ffmpegUrl);
 	const module = await createFFmpeg({
 		printErr:console.log,
-		locateFile:path => {
-			if(path === "ffmpeg.wasm") return wasmUrl;
-			if(path === "ffmpeg.worker.js") return ffmpegWorkerUrl;
-			return path;},
+		locateFile:url => {
+			if(url.endsWith(".wasm")) return wasmUrl;
+			if(url.endsWith(".worker.js")) return ffmpegWorkerUrl;
+			return url;},
 		mainScriptUrlOrBlob:ffmpegUrl});
 	module.onExit = () => {
 		const content = module.FS.readFile("out.mp4");
 		self.postMessage(new Blob([content.buffer], {type:"video/mp4"}));
 	}
 	module.callMain(args);
-	console.log(Worker);
-});
+};
 </script>
 <script>
 (async () => {
@@ -65,35 +35,10 @@ const args = ["-filter_complex", "smptehdbars=size=320x240:rate=30000/1001;sine=
 
 const workerBlob = new Blob([document.querySelector('#worker').textContent], {type:"text/javascript"});
 const worker = new Worker(URL.createObjectURL(workerBlob));
-const subworkers = new Map();
-
 worker.onmessage = event => {
-	const data = event.data;
-	
-	// workaround for safari
-	if(data.kind === "subworker") {
-		const {cmd, id, url} = data;
-		switch(cmd) {
-			case "create":
-				const subworker = new Worker(url);
-				subworker.onmessage = event =>
-					worker.postMessage({kind:"subworker", cmd:"event", id, type:event.type, data:event.data});
-				subworkers.set(id, subworker);
-				break;
-			case "postMessage":
-				subworkers.get(id).postMessage(data.data);
-				break;
-			case "terminate":
-				subworkers.get(id).terminate();
-				subworkers.delete(id);
-			
-		}
-		return;
-	}
-	
 	const video = document.querySelector("video");
 	video.src = URL.createObjectURL(event.data);
-	worker.terminate();
+	setTimeout(() => worker.terminate(), 100);
 }
 worker.postMessage({args, wasmUrl, ffmpegUrl, ffmpegWorkerUrl});
 

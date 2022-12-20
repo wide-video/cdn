@@ -1,0 +1,279 @@
+<body>
+<style>
+:where(:not(img, select)) {
+	all: unset;
+	display: revert;
+	box-sizing: border-box;
+}
+
+html {
+	font: 13px/1.4em "Segoe WPC", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+	background: #252525;
+	color: #ccc;
+	margin: 0;
+}
+
+body {
+	display: grid;
+	grid-template-columns: 20rem auto;
+	grid-template-rows: auto 10rem auto 1fr auto;
+}
+
+code {
+	font-family: monospace;
+}
+
+a {
+	text-decoration: underline;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+#inputs {
+	margin: 1rem;
+	border: 1px dashed #ccc;
+	padding: 1rem;
+	grid-row: 1/4;
+	word-break: break-all;
+}
+
+#templates {
+	margin: 1rem 1rem 0 0;
+	background: #3c3c3c;
+	color: inherit;
+	outline: none;
+}
+
+#arguments {
+	margin-right: 1rem;
+	background: #3c3c3c;
+	padding: 1rem;
+}
+
+#start {
+	margin: 0 1rem 1rem 0;
+	background: red;
+	justify-self: end;
+	padding: 0.2rem 0.5rem;
+}
+
+#log {
+	grid-column: 1/-1;
+	white-space: pre-wrap;
+	overflow: auto;
+	background: #1e1e1e;
+	border: 1rem solid #1e1e1e;
+}
+
+#log .file {
+	display: inline-block;
+	background: black;
+	padding: 1rem;
+}
+
+#log .file video {
+	height: 20rem;
+}
+
+#log .file a {
+	display: block;
+}
+
+#credits {
+	grid-column: 1/-1;
+	justify-self: end;
+	margin: .5rem 1rem;
+}
+
+</style>
+<div id="inputs">Click to browse, or drag &amp; drop files here.</div>
+<select id="templates"></select>
+<textarea id="arguments"></textarea>
+<button id="start">Start</button>
+<div id="log"></div>
+<div id="credits"><a href="https://wide.video">wide.video</a> | Free Online Video Editor</div>
+
+<script id="worker" type="javascript/worker">
+
+// workaround for safari
+if(!("Worker" in self)) {
+	class Worker extends EventTarget {
+		static id = 0;
+		static subworkers = new Map();
+		constructor(url) {
+			super();
+			this.id = Worker.id++;
+			self.postMessage({kind:"subworker", id:this.id, cmd:"create", url});
+			Worker.subworkers.set(this.id, this);
+		}
+		
+		postMessage(data) {
+			self.postMessage({kind:"subworker", id:this.id, cmd:"postMessage", data});
+		}
+		
+		terminate() {
+			self.postMessage({kind:"subworker", id:this.id, cmd:"terminate"});
+			Worker.subworkers.delete(this.id);
+		}
+	}
+	self.Worker = Worker;
+}
+
+self.addEventListener("message", async (event) => {
+	const data = event.data;
+	switch(data.kind) {
+		case "subworker":
+			if(data.cmd === "event")
+				Worker.subworkers.get(data.id).onmessage(new MessageEvent(data.type, {data:data.data}));
+			break;
+		case "execute":
+			const {args, inputs, wasmUrl, ffmpegUrl, ffmpegWorkerUrl} = data;
+			importScripts(ffmpegUrl);
+			const module = await createFFmpeg({
+				printErr:message => self.postMessage({kind:"printErr", message}),
+				locateFile:url => {
+					if(url.endsWith(".wasm")) return wasmUrl;
+					if(url.endsWith(".worker.js")) return ffmpegWorkerUrl;
+					return url;},
+				mainScriptUrlOrBlob:ffmpegUrl});
+		
+			const FS = module.FS;
+			FS.mkdir("input");
+			FS.mount(module.WORKERFS, {files:inputs}, "input");
+			const dirContent = FS.readdir("/");
+		
+			module.onExit = () => {
+				const files = [];
+				for(const filename of FS.readdir("/"))
+					if(!dirContent.includes(filename)) {
+						const content = FS.readFile(filename);
+						let options = undefined;
+						if(filename.endsWith(".mp4")) options = {type:"video/mp4"};
+						files.push(new File([content.buffer], filename, options));
+					}
+				self.postMessage({kind:"onExit", files});
+			}
+			
+			module.callMain(args);
+			break;
+	}
+});
+</script>
+<script>
+(() => {
+
+const inputsElement = document.getElementById("inputs");
+const templatesSelect = document.getElementById("templates");
+const argumentsElement = document.getElementById("arguments");
+const startButton = document.getElementById("start");
+const logElement = document.getElementById("log");
+
+const simd = WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5,
+	1, 96, 0, 1, 123, 3, 2, 1, 0, 10, 10, 1, 8, 0, 65, 0, 253, 15, 253, 98, 11]));
+
+const create = (type, content, attributes) => {
+	const result = document.createElement(type);
+	if(Array.isArray(content))
+		result.append(...content);
+	else if(content !== undefined)
+		result.append(content);
+	if(attributes !== undefined)
+		for (const [key, value] of Object.entries(attributes))
+			result[key] = value;
+	return result;
+}
+
+const log = content => {
+	const isBottom = logElement.scrollTop >= (logElement.scrollHeight - logElement.clientHeight - 5);
+	logElement.append(content);
+	if(isBottom)
+		logElement.scrollTop = logElement.scrollHeight;
+}
+
+if(typeof SharedArrayBuffer === "undefined") {
+	return log(create("p", undefined, {innerHTML:
+		"SharedArrayBuffer is not available. Run <code>chrome --enable-features=SharedArrayBuffer</code> or follow <a href='https://web.dev/cross-origin-isolation-guide/'>A guide to enable cross-origin isolation</a>."}));
+}
+
+const inputs = [];
+
+inputsElement.ondrop = event => {
+	event.preventDefault();
+	const files = event.dataTransfer.files;
+	[...files].forEach(file => inputs.push(file));
+
+	inputsElement.innerHTML = "";
+	for(file of inputs)
+		inputsElement.append(create("div", `input/${file.name}`));
+}
+
+inputsElement.ondragover = event => event.preventDefault();
+
+templatesSelect.append(create("option", "SMPTE Color Bars", {value:`-filter_complex smptehdbars=size=320x240:rate=30000/1001;sine=frequency=440:sample_rate=48000:beep_factor=2
+-c:v libopenh264 -pix_fmt:v yuv420p -profile:v high
+-c:a aac -ac 2
+-t 5 out.mp4 -movflags +faststart`}));
+
+templatesSelect.append(create("option", "Flip Horizontally", {value:`-i input/myinput -vf hflip 
+-c:a copy -c:v libopenh264 out.mp4`}));
+
+templatesSelect.onchange = () => argumentsElement.value = templatesSelect.value;
+
+argumentsElement.value = templatesSelect.value;
+
+
+startButton.onclick = async () => {
+	const wasmUrl = new URL(simd ? "ffmpeg-simd.wasm" : "ffmpeg.wasm", document.location).href;
+	const ffmpegUrl = new URL(simd ? "ffmpeg-simd.js" : "ffmpeg.js", document.location).href;
+	const ffmpegWorkerUrl = new URL(simd ? "ffmpeg-simd.worker.js" : "ffmpeg.worker.js", document.location).href;
+
+	const workerBlob = new Blob([document.querySelector('#worker').textContent], {type:"text/javascript"});
+	const worker = new Worker(URL.createObjectURL(workerBlob));
+	const subworkers = new Map();
+
+	const args = argumentsElement.value.trim().split(/\s+/g);
+
+	worker.onmessage = event => {
+		const data = event.data;
+		
+		// workaround for safari
+		switch(data.kind) {
+			case "subworker":
+				const {cmd, id, url} = data;
+				switch(cmd) {
+					case "create":
+						const subworker = new Worker(url);
+						subworker.onmessage = event =>
+							worker.postMessage({kind:"subworker", cmd:"event", id, type:event.type, data:event.data});
+						subworkers.set(id, subworker);
+						break;
+					case "postMessage":
+						subworkers.get(id).postMessage(data.data);
+						break;
+					case "terminate":
+						subworkers.get(id).terminate();
+						subworkers.delete(id);
+					
+				}
+				break;
+			case "printErr":
+				log(create("p", data.message));
+				break;
+			case "onExit":
+				for(const file of data.files) {
+					const url = URL.createObjectURL(file);
+					log(create("div", [
+						create("video", undefined, {controls:true, src:url}),
+						create("a", `${file.name} (${file.size} bytes)`, {download:file.name, href:url})], {className:"file"}));
+				}
+				setTimeout(() => worker.terminate(), 100);
+				break;
+		}
+	}
+	worker.postMessage({kind:"execute", args, inputs, wasmUrl, ffmpegUrl, ffmpegWorkerUrl});
+
+}
+
+})()
+</script>
+</body>
