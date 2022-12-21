@@ -1,3 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="theme-color" content="#252525">
+
+	<title>FFmpeg Online</title>
+
+	<meta name="description" content="Execute FFmpeg arguments and process audio/video files in the browser.">
+	<meta name="author" content="Jozef Chúťka">
+	<meta property="og:title" content="FFmpeg Online">
+	<meta property="og:description" content="Execute FFmpeg arguments and process audio/video files in the browser.">
+	<meta property="og:locale" content="en_US">
+	<meta property="og:type" content="website">
+	<meta name="twitter:site" content="@wide_video">
+</head>
 <body>
 <style>
 :root {
@@ -5,6 +22,7 @@
 	--color2: #3c3c3c;
 	--color3: #666;
 	--color4: #252525;
+	--color5: #ccc;
 }
 
 :where(:not(img, select)) {
@@ -25,14 +43,16 @@
 html {
 	font: 13px/1.4em "Segoe WPC", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
 	background: var(--color4);
-	color: #ccc;
+	color: var(--color5);
 	margin: 0;
+	height: 100%;
 }
 
 body {
 	display: grid;
 	grid-template-columns: 25rem auto;
-	grid-template-rows: auto auto 10rem auto 1fr;
+	grid-template-rows: auto auto auto auto 1fr auto;
+	height: 100%;
 }
 
 code {
@@ -61,20 +81,25 @@ h1 .title {
 	border: 1px dashed var(--color3);
 	grid-row: span 3;
 	word-break: break-all;
-	height: 14rem;
 	overflow: auto;
 	display: flex;
 	flex-direction: column;
+	min-height: 5rem;
+	max-height: 15rem;
 }
 
 #inputs:empty::after {
-	content: "Drag & drop files here.";
+	content: "Click to browse, or drag & drop files here.";
 	display: flex;
 	width: 100%;
 	height: 100%;
 	align-items: center;
 	justify-content: center;
 	color: var(--color3);
+}
+
+#inputs:empty:hover::after {
+	color: var(--color5);
 }
 
 #inputs div {
@@ -85,6 +110,10 @@ h1 .title {
 	background: var(--color2);
 }
 
+#inputsInput {
+	display: none;
+}
+
 #templates {
 	margin: 0 1rem 0 0;
 	background: var(--color2);
@@ -93,9 +122,11 @@ h1 .title {
 }
 
 #arguments {
+	height: 10rem;
 	margin: 0 1rem 1rem 0;
 	background: var(--color2);
 	padding: .5rem;
+	word-break: break-word;
 }
 
 #start {
@@ -110,9 +141,10 @@ h1 .title {
 #log {
 	grid-column: 1/-1;
 	white-space: pre-wrap;
+	word-break: break-word;
 	overflow: auto;
 	background: #1e1e1e;
-	border: 1rem solid #1e1e1e;
+	padding: 1rem;
 }
 
 #log .row {
@@ -124,7 +156,7 @@ h1 .title {
 	margin-right: 1rem;
 }
 
-#log .args .message {
+#log :is(.args, .state) .message {
 	color: var(--color1);
 }
 
@@ -136,20 +168,47 @@ h1 .title {
 }
 
 #log .file :is(img, video) {
-	height: 20rem;
+	height: 18rem;
 }
 
 #log .file a {
 	display: block;
 }
 
+footer {
+	grid-column: 1/-1;
+	margin: 1rem;
+}
+
+@media only screen and (max-width: 600px) {
+	body {
+		display: flex;
+		flex-direction: column;
+	}
+
+	#templates,
+	#arguments {
+		margin-left: 1rem;
+	}
+
+	#start {
+		align-self: end;
+	}
+
+	#log {
+		flex: 1;
+	}
+}
+
 </style>
 <h1><span class="title">FFmpeg Online</span> <span>powered by <a href="https://wide.video">wide.video</a> | Free Online Video Editor</span></h1>
 <div id="inputs"></div>
+<input id="inputsInput" type="file"/>
 <select id="templates"></select>
 <textarea id="arguments"></textarea>
 <button id="start">Start</button>
 <div id="log"></div>
+<footer>This software uses code of <a href="http://ffmpeg.org">FFmpeg</a> licensed under the <a href="https://github.com/FFmpeg/FFmpeg/blob/master/COPYING.LGPLv3">LGPLv3</a> and its source can be downloaded <a href="https://github.com/wide-video/ffmpeg-wasm/">here</a>.</footer>
 
 <script id="worker" type="javascript/worker">
 
@@ -230,13 +289,22 @@ self.addEventListener("message", async (event) => {
 (() => {
 
 const inputsElement = document.getElementById("inputs");
+const inputsInputElement = document.getElementById("inputsInput");
 const templatesSelect = document.getElementById("templates");
 const argumentsElement = document.getElementById("arguments");
 const startButton = document.getElementById("start");
 const logElement = document.getElementById("log");
 
+const decoder = new TextDecoder("utf8");
+const inputs = [];
 const simd = WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5,
 	1, 96, 0, 1, 123, 3, 2, 1, 0, 10, 10, 1, 8, 0, 65, 0, 253, 15, 253, 98, 11]));
+
+const wasmUrl = new URL(simd ? "ffmpeg-simd.wasm" : "ffmpeg.wasm", document.location).href;
+const ffmpegUrl = new URL(simd ? "ffmpeg-simd.js" : "ffmpeg.js", document.location).href;
+const ffmpegWorkerUrl = new URL(simd ? "ffmpeg-simd.worker.js" : "ffmpeg.worker.js", document.location).href;
+const workerBlob = new Blob([document.querySelector('#worker').textContent], {type:"text/javascript"});
+let process;
 
 const create = (type, content, attributes) => {
 	const result = document.createElement(type);
@@ -257,6 +325,9 @@ const log = content => {
 		logElement.scrollTop = logElement.scrollHeight;
 }
 
+const logRow = (message, className) => log(create("p", [
+		create("span", (performance.now() - process.start).toFixed(0).padStart(5, "0"), {className:"time"}),
+		create("span", message, {className:"message"})], {className:"row " + (className ?? "")}));
 
 const getExtension = filename => {
 	const index = filename.lastIndexOf(".");
@@ -266,11 +337,10 @@ const getExtension = filename => {
 	return extension.length ? extension.toLocaleLowerCase() : undefined;
 }
 
-
 const readLines = key => {
 	const result = [];
 	while(true) {
-		const buffer = buffers[key];
+		const buffer = process[key];
 		const indexN = buffer.indexOf("\n");
 		const indexR = buffer.indexOf("\r");
 		if(indexN === -1 && indexR === -1)
@@ -278,7 +348,7 @@ const readLines = key => {
 
 		const index = (indexN === -1 || ((indexR !== -1 && indexR < indexN))) ? indexR : indexN;
 		result.push(buffer.substring(0, index));
-		buffers[key] = buffer.substring(index + 1);
+		process[key] = buffer.substring(index + 1);
 	}
 	return result;
 }
@@ -288,25 +358,23 @@ const formatSize = value => {
 	return mb > 100 ? (mb / 1024).toFixed(1) + "G" : mb.toFixed(1) + "M";
 }
 
-const decoder = new TextDecoder("utf8");
-const buffers = {};
-
-if(typeof SharedArrayBuffer === "undefined") {
-	return log(create("p", undefined, {innerHTML:
-		"SharedArrayBuffer is not available. Run <code>chrome --enable-features=SharedArrayBuffer</code> or follow <a href='https://web.dev/cross-origin-isolation-guide/'>A guide to enable cross-origin isolation</a>."}));
+const terminateProcess = message => {
+	if(!process)
+		return;
+	logRow(message, "state");
+	process.worker.terminate();
+	process = undefined;
+	startButton.textContent = "Start";
 }
 
-const inputs = [];
-
-inputsElement.ondrop = event => {
-	event.preventDefault();
-	const files = event.dataTransfer.files;
-	[...files].forEach(file => inputs.push(file));
+const addFileList = list => {
+	[...list].forEach(file => inputs.push(file));
 
 	inputsElement.innerHTML = "";
 	for(file of inputs) {
 		const path = `input/${file.name}`;
 		const div = create("div", path);
+		div.onclick = event => event.stopPropagation();
 		div.ondblclick = () => {
 			navigator.clipboard.writeText(path);
 
@@ -320,47 +388,64 @@ inputsElement.ondrop = event => {
 	}
 }
 
+if(typeof SharedArrayBuffer === "undefined")
+	return log(create("p", undefined, {innerHTML:
+		"SharedArrayBuffer is not available. Run <code>chrome --enable-features=SharedArrayBuffer</code> or follow <a href='https://web.dev/cross-origin-isolation-guide/'>A guide to enable cross-origin isolation</a>."}));
+
+inputsElement.onclick = () => inputsInputElement.click();
+
+inputsElement.ondrop = event => {
+	event.preventDefault();
+	addFileList(event.dataTransfer.files);
+}
+
 inputsElement.ondragover = event => event.preventDefault();
 
-templatesSelect.append(create("option", "SMPTE Color Bars", {value:`-filter_complex smptehdbars=size=320x240:rate=30000/1001;sine=frequency=440:sample_rate=48000:beep_factor=2
+inputsInputElement.onchange = event => {
+	addFileList(event.target.files);
+}
+
+templatesSelect.append(create("option", "SMPTE Color Bars", 
+	{value:`ffmpeg -filter_complex smptehdbars=size=320x240:rate=30000/1001;sine=frequency=440:sample_rate=48000:beep_factor=2
 -c:v libopenh264 -pix_fmt:v yuv420p -profile:v high
 -c:a aac -ac 2
 -t 5 out.mp4 -movflags +faststart`}));
 
-templatesSelect.append(create("option", "Flip Horizontally", {value:`-i input/myinput -vf hflip 
--c:a copy -c:v libopenh264 out.mp4`}));
+templatesSelect.append(create("option", "Flip Horizontally",
+	{value:`ffmpeg -i input/myFile.mp4 -vf hflip -c:a copy -c:v libopenh264 out.mp4`}));
 
-templatesSelect.append(create("option", "Extract Frames", {value:`-i input/myinput frame%03d.jpg`}));
+templatesSelect.append(create("option", "Extract Frames",
+	{value:`ffmpeg -i input/myFile.mp4 frame%03d.jpg`}));
+
+templatesSelect.append(create("option", "Extract Audio",
+	{value:`ffmpeg -i input/myFile.mp4 -vn -c:a copy output.mp4`}));
+
+templatesSelect.append(create("option", "Trim Without Re-encoding",
+	{value:`ffmpeg -ss 00:01:00.000 -t 00:00:15.000 -i input/myFile.mp4 -c copy output.mp4`}));
 
 templatesSelect.onchange = () => argumentsElement.value = templatesSelect.value;
 
 argumentsElement.value = templatesSelect.value;
 
-
 startButton.onclick = async () => {
-	const t0 = performance.now();
-	const logRow = (message, className) => log(create("p", [
-		create("span", (performance.now() - t0).toFixed(0).padStart(5, "0"), {className:"time"}),
-		create("span", message, {className:"message"})], {className:"row " + (className ?? "")}));
+	if(process)
+		return terminateProcess("Terminated");
 
-	buffers.stdout = "";
-	buffers.stderr = "";
+	startButton.textContent = "Stop";
 
-	const wasmUrl = new URL(simd ? "ffmpeg-simd.wasm" : "ffmpeg.wasm", document.location).href;
-	const ffmpegUrl = new URL(simd ? "ffmpeg-simd.js" : "ffmpeg.js", document.location).href;
-	const ffmpegWorkerUrl = new URL(simd ? "ffmpeg-simd.worker.js" : "ffmpeg.worker.js", document.location).href;
-
-	const workerBlob = new Blob([document.querySelector('#worker').textContent], {type:"text/javascript"});
-	const worker = new Worker(URL.createObjectURL(workerBlob));
 	const subworkers = new Map();
+	const worker = new Worker(URL.createObjectURL(workerBlob));
+	process = {worker, stdout:"", stderr:"", start:performance.now()};
 
 	const args = argumentsElement.value.trim().split(/\s+/g);
+	if(args[0] === "ffmpeg")
+		args.shift();
 
 	worker.onmessage = event => {
 		const data = event.data;
-		
-		// workaround for safari
+
 		switch(data.kind) {
+			// workaround for safari
 			case "subworker":
 				const {cmd, id, url} = data;
 				switch(cmd) {
@@ -381,7 +466,7 @@ startButton.onclick = async () => {
 				break;
 			case "stderr":
 			case "stdout":
-				buffers[data.kind] += decoder.decode(data.message);
+				process[data.kind] += decoder.decode(data.message);
 				for(const line of readLines(data.kind))
 					logRow(line, data.kind);
 				break;
@@ -395,8 +480,7 @@ startButton.onclick = async () => {
 					log(create("div", [ media,
 						create("a", `${file.name} (${formatSize(file.size)})`, {download:file.name, href:url})], {className:"file"}));
 				}
-				setTimeout(() => worker.terminate(), 100);
-				logRow("Finished")
+				setTimeout(() => terminateProcess("Finished"), 100);
 				break;
 		}
 	}
@@ -408,3 +492,12 @@ startButton.onclick = async () => {
 })()
 </script>
 </body>
+<script async src="https://www.google-analytics.com/analytics.js"></script>
+<script>
+window.ga = window.ga||function(...args){(ga.q=ga.q||[]).push(args)};ga.l=+new Date;
+window.ga("create", "UA-183634-11", {storage:"none",
+	clientId:"index-" + navigator.userAgent.split("").reduce((p,c,i)=>i*c.charCodeAt(0)+p,0)});
+window.ga('set', 'anonymizeIp', true);
+window.ga("send", "pageview");
+</script>
+</html>
