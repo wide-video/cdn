@@ -13,7 +13,6 @@ RewriteCond %{HTTP:Accept-encoding} br
 RewriteCond %{REQUEST_FILENAME}\.br -s
 RewriteRule ^(.*) $1\.br [QSA]
 
-RewriteRule \.exe\.br$ - [E=no-gzip,E=no-brotli]
 RewriteRule \.js\.br$ - [T=text/javascript,E=no-gzip,E=no-brotli]
 RewriteRule \.wasm\.br$ - [T=application/wasm,E=no-gzip,E=no-brotli]
 
@@ -22,3 +21,53 @@ RewriteRule \.wasm\.br$ - [T=application/wasm,E=no-gzip,E=no-brotli]
 	Header append Vary Accept-Encoding
 </FilesMatch>
 
+ 
+# Generated extra 
+<FilesMatch "(ffmpeg-gpl-simd-wv.js\.br)$"> 
+	Header set x-content-length 136210 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-gpl-simd.js\.br)$"> 
+	Header set x-content-length 136194 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-gpl-simd.worker.js\.br)$"> 
+	Header set x-content-length 2358 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-gpl-simd.wasm\.br)$"> 
+	Header set x-content-length 43434444 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-lgpl-simd-wv.js\.br)$"> 
+	Header set x-content-length 135870 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-lgpl-simd.js\.br)$"> 
+	Header set x-content-length 135854 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-lgpl-simd.worker.js\.br)$"> 
+	Header set x-content-length 2358 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-lgpl-simd.wasm\.br)$"> 
+	Header set x-content-length 35932408 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-lgpl-wv.js\.br)$"> 
+	Header set x-content-length 135860 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-lgpl.js\.br)$"> 
+	Header set x-content-length 135844 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-lgpl.worker.js\.br)$"> 
+	Header set x-content-length 2358 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-lgpl.wasm\.br)$"> 
+	Header set x-content-length 25506168 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-gpl-wv.js\.br)$"> 
+	Header set x-content-length 136200 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-gpl.js\.br)$"> 
+	Header set x-content-length 136184 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-gpl.worker.js\.br)$"> 
+	Header set x-content-length 2358 
+</FilesMatch> 
+<FilesMatch "(ffmpeg-gpl.wasm\.br)$"> 
+	Header set x-content-length 30116146 
+</FilesMatch> 
