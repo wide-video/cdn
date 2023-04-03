@@ -73,6 +73,10 @@ curl http://ftp.nluug.nl/pub/graphics/blender/demo/movies/BBB/bbb_sunflower_2160
 copy sintel_vp8_1920x818_24fps_vorbis_stereo_30s_1MB.webm "sintel_vp8_1920x818_24fps_vorbis_stereo_30s_1MB_chars čř.webm"
 copy sf_aac_stereo_203s_3MB.m4a "sf_aac_stereo_203s_3MB_chars čř.m4a"
 
+ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f matroska -movflags +faststart -y counter_h264_36x36_23.976fps_10s_0MB.mkv
+ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_23.976fps_10s_0MB.mp4
+ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f matroska -movflags +faststart -y counter_h264_36x36_30fps_10s_0MB.mkv
+ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_30fps_10s_0MB.mp4
 ffmpeg -filter_complex "color=black:36x36:24,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=24:fontsize=8:fontcolor=white" -t 60 -c:v libx265 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h265_36x36_24fps_0MB.mp4
 
 curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_0.jpg --output rotated_jpeg_1200x1800_0_0MB.jpg
@@ -84,3 +88,5 @@ curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master
 curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_6.jpg --output rotated_jpeg_1200x1800_6_0MB.jpg
 curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_7.jpg --output rotated_jpeg_1200x1800_7_0MB.jpg
 curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_8.jpg --output rotated_jpeg_1200x1800_8_0MB.jpg
+
+curl https://raw.githubusercontent.com/chrisdavidmills/html5-captions-and-subtitles-content-kit/gh-pages/demo/step4/vtt/sintel-captions-en.vtt --output sintel_captions_en.vtt
