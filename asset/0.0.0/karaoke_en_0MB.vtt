@@ -1,0 +1,34 @@
+WEBVTT
+
+STYLE
+::cue {
+	color: blue;
+}
+::cue(:past) {
+  color: yellow;
+}
+::cue(:future) {
+  color: cyan;
+}
+::cue(.myClassA) {
+	text-decoration: underline;
+}
+::cue(.myClassB) {
+	font-weight: bold;
+}
+
+1
+00:16.500 --> 00:18.500
+When the moon <00:17.500>hits your eye
+
+2
+00:00:18.500 --> 00:00:20.500
+Like a <00:19.000>big-a <00:19.500>pizza <00:20.000>pie
+
+3
+00:00:20.500 --> 00:00:21.500
+That's <00:00:21.000>amore
+
+4
+00:00:30.000 --> 00:00:35.500
+<c.myClassA>myClassA</c> <c.myClassB>myClassB</c>

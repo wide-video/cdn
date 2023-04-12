@@ -90,3 +90,8 @@ curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master
 curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_8.jpg --output rotated_jpeg_1200x1800_8_0MB.jpg
 
 curl https://raw.githubusercontent.com/chrisdavidmills/html5-captions-and-subtitles-content-kit/gh-pages/demo/step4/vtt/sintel-captions-en.vtt --output sintel_captions_en.vtt
+
+curl https://github.com/ChineseCubes/react-vtt/raw/master/examples/demo/assets/chocolate_rain.mp4 -L --output chocolate_rain_h264_320x240_29.97fps_aac_stereo_292s_12MB.mp4
+
+REM customized by hand
+REM curl https://github.com/ChineseCubes/react-vtt/raw/master/examples/demo/assets/chocolate_rain.vtt -L --output chocolate_rain_en_0MB.vtt
