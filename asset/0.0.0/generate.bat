@@ -56,7 +56,7 @@ ffmpeg -ss 120 -i sintel_h264_1920x818_24fps_ac3_51_888s_1172MB.mkv -vn -c:a ac3
 
 ffmpeg -i sintel_h264_1920x818_24fps_aac_stereo_30s_7MB.mp4 -c copy -an sintel_h264_1920x818_24fps_30s_7MB.mp4
 
-ffmpeg -ss 120 -i sintel_h264_1920x818_24fps_ac3_51_888s_1172MB.mkv -c:v libx265 -crf:v 26 -preset:v veryslow -bf 0 -c:a aac -ac 2 -f mp4 -movflags +faststart -t 30 -y sintel_h265_1920x818_24fps_aac_stereo_30s_4MB.mp4
+ffmpeg -ss 120 -i sintel_h264_1920x818_24fps_ac3_51_888s_1172MB.mkv -c:v libx265 -tag:v hvc1 -crf:v 26 -preset:v slow -bf 0 -c:a aac -ac 2 -f mp4 -movflags +faststart -t 30 -y sintel_h265_1920x818_24fps_aac_stereo_30s_4MB.mp4
 
 ffmpeg -ss 120 -i sintel_h264_1920x818_24fps_ac3_51_888s_1172MB.mkv -c:v libvpx -c:a libvorbis -ac 2 -t 30 -y sintel_vp8_1920x818_24fps_vorbis_stereo_30s_1MB.webm
 
@@ -70,7 +70,7 @@ ffmpeg -ss 555 -i tos_h264_1920x800_24fps_mp3_stereo_734s_583MB.mov -vf "scale=1
 
 ffmpeg -i tos_h264_1920x800_24fps_mp3_stereo_734s_583MB.mov -vf "scale=640:-2" -c:v libx264 -profile:v high -preset:v veryslow -b:v 120k -pix_fmt:v yuv420p -c:a aac -ac 2 -f mp4 -movflags +faststart -y tos_h264_640x266_aac_stereo_734s_23MB.mp4
 
-ffmpeg -i tos_h264_1920x800_24fps_mp3_stereo_734s_583MB.mov -vf "scale=640:-2" -c:v libx265 -b:v 120k -pix_fmt:v yuv420p -c:a aac -ac 2 -f mp4 -y tos_h265_640x266_aac_stereo_734s_23MB.mp4
+ffmpeg -i tos_h264_1920x800_24fps_mp3_stereo_734s_583MB.mov -vf "scale=640:-2" -c:v libx265 -tag:v hvc1 -b:v 120k -pix_fmt:v yuv420p -c:a aac -ac 2 -f mp4 -y tos_h265_640x266_aac_stereo_734s_23MB.mp4
 
 ffmpeg -i tos_h264_1920x800_24fps_mp3_stereo_734s_583MB.mov -vn -c:a copy -f mp4 -movflags +faststart -y tos_h264_mp3_stereo_734s_17MB.mp4
 
@@ -85,7 +85,7 @@ ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.t
 ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_23.976fps_10s_0MB.mp4
 ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f matroska -movflags +faststart -y counter_h264_36x36_30fps_10s_0MB.mkv
 ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_30fps_10s_0MB.mp4
-ffmpeg -filter_complex "color=black:36x36:24,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=24:fontsize=8:fontcolor=white" -t 60 -c:v libx265 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h265_36x36_24fps_0MB.mp4
+ffmpeg -filter_complex "color=black:36x36:24,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=24:fontsize=8:fontcolor=white" -t 60 -c:v libx265 -tag:v hvc1 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h265_36x36_24fps_0MB.mp4
 
 curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_0.jpg --output rotated_jpeg_1200x1800_0_0MB.jpg
 curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_1.jpg --output rotated_jpeg_1200x1800_1_0MB.jpg
