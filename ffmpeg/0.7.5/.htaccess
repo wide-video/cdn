@@ -1,0 +1,72 @@
+Header set Access-Control-Allow-Headers: *
+Header set Access-Control-Allow-Origin *
+Header set Access-Control-Expose-Headers *
+Header set Cache-Control "public, max-age=604800, s-maxage=604800, immutable"
+Header set Cross-Origin-Opener-Policy same-origin
+Header set Cross-Origin-Embedder-Policy require-corp
+
+RewriteEngine On
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{HTTP:Accept-encoding} br
+RewriteCond %{REQUEST_FILENAME}\.br -s
+RewriteRule ^(.*) $1\.br [QSA]
+
+RewriteRule \.js\.br$ - [T=text/javascript,E=no-gzip,E=no-brotli]
+RewriteRule \.wasm\.br$ - [T=application/wasm,E=no-gzip,E=no-brotli]
+
+<FilesMatch "(\.br)$">
+	Header set Content-Encoding br
+	Header append Vary Accept-Encoding
+</FilesMatch>
+
+#Generated extra
+<FilesMatch "(ffmpeg-gpl-simd-wv.js\.br)$">
+	Header set x-content-length 135493
+</FilesMatch>
+<FilesMatch "(ffmpeg-gpl-simd.js\.br)$">
+	Header set x-content-length 135477
+</FilesMatch>
+<FilesMatch "(ffmpeg-gpl-simd.worker.js\.br)$">
+	Header set x-content-length 2209
+</FilesMatch>
+<FilesMatch "(ffmpeg-gpl-wv.js\.br)$">
+	Header set x-content-length 135483
+</FilesMatch>
+<FilesMatch "(ffmpeg-gpl.js\.br)$">
+	Header set x-content-length 135467
+</FilesMatch>
+<FilesMatch "(ffmpeg-gpl.worker.js\.br)$">
+	Header set x-content-length 2209
+</FilesMatch>
+<FilesMatch "(ffmpeg-lgpl-simd-wv.js\.br)$">
+	Header set x-content-length 135222
+</FilesMatch>
+<FilesMatch "(ffmpeg-lgpl-simd.js\.br)$">
+	Header set x-content-length 135206
+</FilesMatch>
+<FilesMatch "(ffmpeg-lgpl-simd.worker.js\.br)$">
+	Header set x-content-length 2209
+</FilesMatch>
+<FilesMatch "(ffmpeg-lgpl-wv.js\.br)$">
+	Header set x-content-length 135212
+</FilesMatch>
+<FilesMatch "(ffmpeg-lgpl.js\.br)$">
+	Header set x-content-length 135196
+</FilesMatch>
+<FilesMatch "(ffmpeg-lgpl.worker.js\.br)$">
+	Header set x-content-length 2209
+</FilesMatch>
+<FilesMatch "(ffmpeg-gpl-simd.wasm\.br)$">
+	Header set x-content-length 38333745
+</FilesMatch>
+<FilesMatch "(ffmpeg-gpl.wasm\.br)$">
+	Header set x-content-length 30573559
+</FilesMatch>
+<FilesMatch "(ffmpeg-lgpl-simd.wasm\.br)$">
+	Header set x-content-length 30847719
+</FilesMatch>
+<FilesMatch "(ffmpeg-lgpl.wasm\.br)$">
+	Header set x-content-length 25951732
+</FilesMatch>
