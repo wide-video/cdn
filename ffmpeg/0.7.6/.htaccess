@@ -59,56 +59,6 @@ RewriteRule \.wasm\.br$ - [T=application/wasm,E=no-gzip,E=no-brotli]
 	Header set x-content-length 2209
 </FilesMatch>
 <FilesMatch "(ffmpeg-gpl-simd.wasm\.br)$">
-	Header set x-content-length 38333745
-</FilesMatch>
-<FilesMatch "(ffmpeg-gpl.wasm\.br)$">
-	Header set x-content-length 30573559
-</FilesMatch>
-<FilesMatch "(ffmpeg-lgpl-simd.wasm\.br)$">
-	Header set x-content-length 30847719
-</FilesMatch>
-<FilesMatch "(ffmpeg-lgpl.wasm\.br)$">
-	Header set x-content-length 25951732
-</FilesMatch>
-
-#Generated extra
-<FilesMatch "(ffmpeg-gpl-simd-wv.js\.br)$">
-	Header set x-content-length 135493
-</FilesMatch>
-<FilesMatch "(ffmpeg-gpl-simd.js\.br)$">
-	Header set x-content-length 135477
-</FilesMatch>
-<FilesMatch "(ffmpeg-gpl-simd.worker.js\.br)$">
-	Header set x-content-length 2209
-</FilesMatch>
-<FilesMatch "(ffmpeg-gpl-wv.js\.br)$">
-	Header set x-content-length 135483
-</FilesMatch>
-<FilesMatch "(ffmpeg-gpl.js\.br)$">
-	Header set x-content-length 135467
-</FilesMatch>
-<FilesMatch "(ffmpeg-gpl.worker.js\.br)$">
-	Header set x-content-length 2209
-</FilesMatch>
-<FilesMatch "(ffmpeg-lgpl-simd-wv.js\.br)$">
-	Header set x-content-length 135222
-</FilesMatch>
-<FilesMatch "(ffmpeg-lgpl-simd.js\.br)$">
-	Header set x-content-length 135206
-</FilesMatch>
-<FilesMatch "(ffmpeg-lgpl-simd.worker.js\.br)$">
-	Header set x-content-length 2209
-</FilesMatch>
-<FilesMatch "(ffmpeg-lgpl-wv.js\.br)$">
-	Header set x-content-length 135212
-</FilesMatch>
-<FilesMatch "(ffmpeg-lgpl.js\.br)$">
-	Header set x-content-length 135196
-</FilesMatch>
-<FilesMatch "(ffmpeg-lgpl.worker.js\.br)$">
-	Header set x-content-length 2209
-</FilesMatch>
-<FilesMatch "(ffmpeg-gpl-simd.wasm\.br)$">
 	Header set x-content-length 38333966
 </FilesMatch>
 <FilesMatch "(ffmpeg-gpl.wasm\.br)$">
