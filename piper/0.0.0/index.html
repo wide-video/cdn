@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="theme-color" content="#252525">
+
+	<title>PIPER Online</title>
+
+	<meta name="description" content="Online speech to text synthesizer.">
+	<meta name="author" content="Jozef Chúťka">
+	<meta property="og:title" content="PIPER Online">
+	<meta property="og:description" content="Online speech to text synthesizer.">
+	<meta property="og:locale" content="en_US">
+	<meta property="og:type" content="website">
+	<meta name="twitter:site" content="@wide_video">
+</head>
+<body>
+<style>
+:root {
+	--color1: #007cc9;
+	--color2: #3c3c3c;
+	--color3: #666;
+	--color4: #252525;
+	--color5: #ccc;
+}
+
+:where(:not(audio, img, select)) {
+	all: unset;
+	display: revert;
+	box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+	width: .5rem;
+	height: .5rem;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: var(--color3);
+}
+
+html {
+	font: 13px/1.4em "Segoe WPC", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+	background: var(--color4);
+	color: var(--color5);
+	margin: 0;
+	height: 100%;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+a {
+	text-decoration: underline;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+h1 {
+	display: flex;
+	justify-content: space-between;
+	margin: 1rem;
+}
+
+h1 .title {
+	font-weight: bold;
+}
+
+#input {
+	height: 10rem;
+	margin: 0 1rem;
+	background: var(--color2);
+	padding: 0.5rem;
+	word-break: break-word;
+}
+
+#voices {
+	margin: 0 1rem;
+	background: var(--color2);
+	color: inherit;
+	outline: none;
+}
+
+#start {
+	margin: 1rem;
+	background: var(--color1);
+	align-self: end;
+	padding: 0.2rem 0.5rem;
+	font-weight: bold;
+	color: white;
+}
+
+#log {
+	white-space: pre-wrap;
+	word-break: break-word;
+	overflow: auto;
+	background: #1e1e1e;
+	padding: 1rem;
+	flex: 1;
+}
+
+#log .output {
+	width: 100%;
+	display: inline-block;
+	background: var(--color4);
+	padding: 1rem 1rem .5rem 1rem;
+	margin: 0 .5rem .5rem 0;
+}
+
+#log .output q {
+	font-style: italic;
+	margin: 0 0 0.5em 0;
+}
+
+#log .output audio {
+	width: 100%;
+}
+
+#log :is(.init, .complete) {
+	font-family: monospace;
+	color: yellow;
+}
+
+#log .complete {
+	margin-bottom: 1em;
+}
+
+#log .fetch {
+	color: green;
+	position: relative;
+}
+
+#log .fetch::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	width: calc(var(--progress) * 100%);
+	background: green;
+	opacity: .2;
+}
+
+footer {
+	grid-column: 1/-1;
+	margin: 1rem;
+}
+
+</style>
+<h1><span class="title">PIPER Online</span> <span>powered by <a href="https://wide.video">wide.video</a> | Free Online Video Editor</span></h1>
+<textarea id="input">
+Feedback must be timely and accurate throughout the project.
+</textarea>
+<select id="voices"></select>
+<button id="start">Run</button>
+<div id="log"></div>
+<footer>This software uses code of <a href="https://github.com/rhasspy/piper">PIPER</a> licensed under the <a href="https://github.com/rhasspy/piper/blob/master/LICENSE.md">MIT License</a> and its source can be downloaded <a href="https://github.com/rhasspy/piper">here</a>.</footer>
+
+<script>
+function create(type, className, textContent) {
+	const result = document.createElement(type);
+	if(className !== undefined) result.className = className;
+	if(textContent !== undefined) result.textContent = textContent;
+	return result;
+}
+
+const logElement = document.querySelector("#log");
+const inputElement = document.querySelector("#input");
+const voicesElement = document.querySelector("#voices");
+const startButton = document.querySelector("#start");
+
+const blobs = {};
+let voices, worker;
+
+startButton.onclick = () => {
+	worker?.terminate();
+
+	const [voiceKey, speaker] = voicesElement.value.split("/");
+	const model = {files:voices[voiceKey].files};
+	const speaker_id = speaker !== undefined ? parseInt(speaker) : undefined;
+	const input = inputElement.value
+		.split("\n")
+		.map(text => text.trim())
+		.filter(text => text.length)
+		.map((text, i) => ({text, output_file:`output-${i+1}.wav`, speaker_id}));
+
+	logElement.append(create("div", "init", `Input: ${JSON.stringify(input)}`));
+	logElement.append(create("div", "init", `Model: ${JSON.stringify(model)}`));
+
+	worker = new Worker("worker.js");
+	worker.postMessage({kind:"init", input, model, blobs});
+	worker.addEventListener("message", event => {
+		const data = event.data;
+		switch(data.kind) {
+			case "output": {
+				const audio = document.createElement("audio");
+				audio.controls = true;
+				audio.src = URL.createObjectURL(data.file);
+
+				const div = create("div", "output");
+				div.append(create("q", undefined, data.input.text), audio);
+				logElement.append(div);
+				break;
+			}
+			case "stderr": {
+				logElement.append(create("div", "stderr", data.message));
+				break;
+			}
+			case "complete": {
+				logElement.append(create("div", "complete", "Complete"));
+				break;
+			}
+			case "fetch": {
+				const id = `fetch-${data.id}`;
+				if(data.blob)
+					blobs[data.url] = data.blob;
+				const div = document.querySelector(`#${id}`) ?? create("div", "fetch");
+				const progress = data.blob ? 1 : (data.total ? data.loaded / data.total : 0);
+				div.id = id;
+				div.textContent = `fetching ${data.url} ${Math.round(progress * 100)}%`;
+				div.style.setProperty("--progress", `${progress}`);
+				logElement.append(div);
+				break;
+			}
+		}
+	})
+}
+
+(async () => {
+	const voicesUrl = "https://rhasspy.github.io/piper-samples/voices.json";
+
+	logElement.append(create("div", "init", "Initializing Voices"));
+	logElement.append(create("div", "fetch", `fetching ${voicesUrl}`));
+	logElement.append(create("div", "complete", "Complete"));
+	voices = await (await fetch(voicesUrl)).json();
+
+	const options = [];
+
+	for(const [value, voice] of Object.entries(voices)) {
+		let size = 0;
+		for(const file of Object.values(voice.files))
+			size += file.size_bytes;
+		const sizeFormatted = `${(size / 1024).toFixed(0)}MB`;
+
+		const text = `${voice.language.name_native} (${voice.language.name_english}, ${voice.language.country_english}) Voice:${voice.name} Quality:${voice.quality} Size:${sizeFormatted}`;
+		const speakers = Object.entries(voice.speaker_id_map);
+		if(speakers.length)
+			for(const [speaker, speaker_id] of speakers) {
+				options.push({
+					value: `${value}/${speaker_id}`,
+					text: `${text} Speaker:${speaker} (${speaker_id})`});
+			}
+		else
+			options.push({value, text});
+	}
+
+	options.sort((a, b) => a.text.localeCompare(b.text));
+
+	for(const {text, value} of options) {
+		const option = document.createElement("option");
+		option.text = text;
+		option.value = value;
+		voicesElement.add(option);
+	}
+	voicesElement.value = "en_US-lessac-medium";
+})()
+</script>
+</body>
+<script>
+if(!document.location.hostname.endsWith("wv")) {
+	const script = document.createElement("script");
+	script.src = "https://beamanalytics.b-cdn.net/beam.min.js";
+	script.setAttribute("async", "");
+	script.dataset.token = "e84f95f0-8bf6-4389-b09f-14563661877c";
+	document.body.append(script);
+}
+</script>
+</html>
