@@ -10,7 +10,7 @@ fi
 
 echo -e "\n#Generated extra" >> .htaccess
 
-for filename in piper.data piper.js piper.wasm ; do
+for filename in piper.data piper.js piper.wasm voices*.json ; do
 	filesize=$(stat -f%z "$filename")
 	echo "processing $filename ($filesize bytes)"
 	
