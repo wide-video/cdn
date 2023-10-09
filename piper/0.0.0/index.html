@@ -5,12 +5,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<meta name="theme-color" content="#252525">
 
-	<title>PIPER Online</title>
+	<title>PIPER Speech Synthesizer</title>
 
-	<meta name="description" content="Online speech to text synthesizer.">
+	<meta name="description" content="Online speech synthesizer in WebAssembly (WASM).">
 	<meta name="author" content="Jozef Chúťka">
 	<meta property="og:title" content="PIPER Online">
-	<meta property="og:description" content="Online speech to text synthesizer.">
+	<meta property="og:description" content="Online speech synthesizer in WebAssembly (WASM).">
 	<meta property="og:locale" content="en_US">
 	<meta property="og:type" content="website">
 	<meta name="twitter:site" content="@wide_video">
@@ -78,11 +78,24 @@ h1 .title {
 	word-break: break-word;
 }
 
-#voices {
+#voice {
 	margin: 0 1rem;
+	display: flex;
+}
+
+#voices,
+#speakers {
 	background: var(--color2);
 	color: inherit;
 	outline: none;
+}
+
+#voices {
+	flex: 1;
+}
+
+#speakers:not(.hasSpeakers) {
+	display: none;
 }
 
 #start {
@@ -153,7 +166,10 @@ footer {
 <textarea id="input">
 Feedback must be timely and accurate throughout the project.
 </textarea>
-<select id="voices"></select>
+<div id="voice">
+	<select id="voices"></select>
+	<select id="speakers"></select>
+</div>
 <button id="start">Run</button>
 <div id="log"></div>
 <footer>This software uses code of <a href="https://github.com/rhasspy/piper">PIPER</a> licensed under the <a href="https://github.com/rhasspy/piper/blob/master/LICENSE.md">MIT License</a> and its source can be downloaded <a href="https://github.com/rhasspy/piper">here</a>.</footer>
@@ -171,6 +187,7 @@ function create(type, className, textContent) {
 const logElement = document.querySelector("#log");
 const inputElement = document.querySelector("#input");
 const voicesElement = document.querySelector("#voices");
+const speakersElement = document.querySelector("#speakers");
 const startButton = document.querySelector("#start");
 
 const blobs = {};
@@ -179,20 +196,21 @@ let voices, worker;
 startButton.onclick = () => {
 	worker?.terminate();
 
-	const [voiceKey, speaker] = voicesElement.value.split("/");
-	const model = {files:voices[voiceKey].files};
-	const speaker_id = speaker !== undefined ? parseInt(speaker) : undefined;
+	const voiceFiles = voices[voicesElement.value].files;
+	const speaker_id = parseInt(speakersElement.value);
 	const input = inputElement.value
 		.split("\n")
 		.map(text => text.trim())
 		.filter(text => text.length)
-		.map((text, i) => ({text, output_file:`output-${i+1}.wav`, speaker_id}));
+		.map((text, i) => ({text,
+			output_file:`output-${i+1}.wav`,
+			speaker_id:speaker_id >= 0 ? speaker_id : undefined}));
 
 	logElement.append(create("div", "init", `Input: ${JSON.stringify(input)}`));
-	logElement.append(create("div", "init", `Model: ${JSON.stringify(model)}`));
+	logElement.append(create("div", "init", `Voice: ${JSON.stringify(voiceFiles)}`));
 
 	worker = new Worker("worker.js");
-	worker.postMessage({kind:"init", version:VERSION, input, model, blobs});
+	worker.postMessage({kind:"init", version:VERSION, input, voiceFiles, blobs});
 	worker.addEventListener("message", event => {
 		const data = event.data;
 		switch(data.kind) {
@@ -231,7 +249,6 @@ startButton.onclick = () => {
 }
 
 (async () => {
-	// url https://rhasspy.github.io/piper-samples/voices.json --output voices-v1.0.0.json
 	const voicesUrl = `voices-${VERSION}.json`;
 
 	logElement.append(create("div", "init", "Initializing Voices"));
@@ -247,16 +264,12 @@ startButton.onclick = () => {
 			size += file.size_bytes;
 		const sizeFormatted = `${(size / 1024).toFixed(0)}MB`;
 
-		const text = `${voice.language.name_native} (${voice.language.name_english}, ${voice.language.country_english}) Voice:${voice.name} Quality:${voice.quality} Size:${sizeFormatted}`;
-		const speakers = Object.entries(voice.speaker_id_map);
-		if(speakers.length)
-			for(const [speaker, speaker_id] of speakers) {
-				options.push({
-					value: `${value}/${speaker_id}`,
-					text: `${text} Speaker:${speaker} (${speaker_id})`});
-			}
-		else
-			options.push({value, text});
+		const text = `${voice.language.name_native} (${voice.language.name_english}, ${voice.language.country_english})`
+			+ ` Voice:${voice.name}`
+			+ ` Quality:${voice.quality}`
+			+ (voice.num_speakers > 1 ? ` Speakers:${voice.num_speakers}` : "")
+			+ ` Size:${sizeFormatted}`;
+		options.push({value, text});
 	}
 
 	options.sort((a, b) => a.text.localeCompare(b.text));
@@ -267,7 +280,30 @@ startButton.onclick = () => {
 		option.value = value;
 		voicesElement.add(option);
 	}
+
+	function updateSpeakers() {
+		const voice = voices[voicesElement.value];
+
+		speakersElement.length = 0;
+		const option = document.createElement("option");
+		option.text = "Default Speaker";
+		option.value = "-1";
+		speakersElement.add(option);
+
+		const speakers = Object.entries(voice.speaker_id_map);
+		speakersElement.classList.toggle("hasSpeakers", speakers.length > 0);
+		if(speakers.length)
+			for(const [speaker, speaker_id] of speakers) {
+				const option = document.createElement("option");
+				option.text = speaker;
+				option.value = `${speaker_id}`;
+				speakersElement.add(option);
+			}
+	}
+
 	voicesElement.value = "en_US-lessac-medium";
+	voicesElement.onchange = updateSpeakers;
+	updateSpeakers();
 })()
 </script>
 </body>

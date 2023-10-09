@@ -1,7 +1,7 @@
 self.addEventListener("message", async (event) => {
 	const data = event.data;
 	if(data.kind === "init")
-		init(data.version, data.model, data.input, data.blobs);
+		init(data.version, data.voiceFiles, data.input, data.blobs);
 })
 
 const getBlob = async (url, blobs) => new Promise(resolve => {
@@ -31,7 +31,7 @@ const getBlob = async (url, blobs) => new Promise(resolve => {
 	xhr.send();
 });
 
-async function init(version, model, input, blobs) {
+async function init(version, voiceFiles, input, blobs) {
 	const piperJs = URL.createObjectURL(await getBlob("piper.js", blobs));
 	const piperWasm = URL.createObjectURL(await getBlob("piper.wasm", blobs));
 	const piperData = URL.createObjectURL(await getBlob("piper.data", blobs));
@@ -60,7 +60,7 @@ async function init(version, model, input, blobs) {
 
 	const files = [];
 	let modelFile = "";
-	for(const key of Object.keys(model.files)) {
+	for(const key of Object.keys(voiceFiles)) {
 		// https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx
 		const url = `https://huggingface.co/wide-video/piper-voices-${version}/resolve/main/${key}`;
 		const filename = key.split("/").pop();
