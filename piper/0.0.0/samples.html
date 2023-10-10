@@ -1,0 +1,74 @@
+<style>
+h1 {
+	font-size: 1em;
+	margin: 0 0 .2em 0;
+}
+section {
+	margin: 0 0 1em 0;
+}
+button {
+	all: initial;
+	text-decoration: underline;
+	display: inline-block;
+	width: 6em;
+}
+audio {
+	position: fixed;
+	right: 0;
+	top: 0;
+}
+</style>
+
+<audio controls crossorigin="anonymous"></audio>
+<body>
+<script>
+
+(async () => {
+
+const body = document.body;
+const audio = document.querySelector("audio");
+const voices = await (await fetch("voices-v1.0.0.json")).json();
+
+function create(type, content) {
+	const result = document.createElement(type);
+	if(content !== undefined)
+		result.append(content);
+	return result;
+}
+
+function createSample(path, speaker) {
+	const url = `https://rhasspy.github.io/piper-samples/samples/${path}/speaker_${speaker}.mp3`;
+	const result = create("button", `speaker ${speaker}`);
+	result.onclick = () => {
+		audio.src = url;
+		audio.play();
+	}
+	return result;
+}
+
+for(const [key, voice] of Object.entries(voices)) {
+	const speakers = Object.values(voice.speaker_id_map);
+	const pathChunks = Object.keys(voice.files)[0].split("/");
+	pathChunks.pop();
+	const path = pathChunks.join("/");
+
+	body.append(create("h1", key));
+	const samples = create("section");
+
+	if(!speakers.length)
+		samples.append(createSample(path, 0));
+	else
+		for(const speaker of speakers)
+			samples.append(createSample(path, speaker));
+
+	body.append(samples);
+}
+
+
+document.querySelectorAll("div[data-src]").forEach(element => {
+	element
+})
+
+})()
+
+</script>
