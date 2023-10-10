@@ -5,11 +5,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<meta name="theme-color" content="#252525">
 
-	<title>PIPER Speech Synthesizer</title>
+	<title>Piper Speech Synthesizer</title>
 
 	<meta name="description" content="Online speech synthesizer in WebAssembly (WASM).">
 	<meta name="author" content="Jozef Chúťka">
-	<meta property="og:title" content="PIPER Online">
+	<meta property="og:title" content="Piper Online">
 	<meta property="og:description" content="Online speech synthesizer in WebAssembly (WASM).">
 	<meta property="og:locale" content="en_US">
 	<meta property="og:type" content="website">
@@ -162,7 +162,7 @@ footer {
 }
 
 </style>
-<h1><span class="title">PIPER Online</span> <span>powered by <a href="https://wide.video">wide.video</a> | Free Online Video Editor</span></h1>
+<h1><span class="title">Piper Online</span> <span>powered by <a href="https://wide.video">wide.video</a> | Free Online Video Editor</span></h1>
 <textarea id="input">
 Feedback must be timely and accurate throughout the project.
 </textarea>
@@ -172,8 +172,93 @@ Feedback must be timely and accurate throughout the project.
 </div>
 <button id="start">Run</button>
 <div id="log"></div>
-<footer>This software uses code of <a href="https://github.com/rhasspy/piper">PIPER</a> licensed under the <a href="https://github.com/rhasspy/piper/blob/master/LICENSE.md">MIT License</a> and its source can be downloaded <a href="https://github.com/rhasspy/piper">here</a>.</footer>
+<footer>This software uses code of <a href="https://github.com/rhasspy/piper">Piper</a>
+	licensed under the <a href="https://github.com/rhasspy/piper/blob/master/LICENSE.md">MIT License</a> 
+	and its source can be downloaded <a href="https://github.com/rhasspy/piper">here</a>.
+	Preview <a href="samples.html">sample voices here</a>.</footer>
 
+<script id="worker" type="javascript/worker">
+self.addEventListener("message", async (event) => {
+	const data = event.data;
+	if(data.kind === "init")
+		init(data);
+})
+
+const getBlob = async (url, blobs) => new Promise(resolve => {
+	const cached = blobs[url];
+	if(cached)
+		return resolve(cached);
+	const id = new Date().getTime();
+	let xContentLength;
+	self.postMessage({kind:"fetch", id, url});
+
+	const xhr = new XMLHttpRequest();
+	xhr.responseType = "blob";
+	xhr.onprogress = event => 
+		self.postMessage({kind:"fetch", id, url, total:xContentLength ?? event.total, loaded:event.loaded})
+	xhr.onreadystatechange = () => {
+		if(xhr.readyState >= xhr.HEADERS_RECEIVED
+			&& xContentLength === undefined
+			&& xhr.getAllResponseHeaders().includes("x-content-length"))
+			xContentLength = Number(xhr.getResponseHeader("x-content-length"));
+
+		if(xhr.readyState === xhr.DONE) {
+			self.postMessage({kind:"fetch", id, url, blob:xhr.response})
+				resolve(xhr.response);
+		}
+	}
+	xhr.open("GET", url);
+	xhr.send();
+});
+
+async function init(data) {
+	const {input, blobs} = data;
+	const piperJs = URL.createObjectURL(await getBlob(data.piperJsUrl, blobs));
+	const piperWasm = URL.createObjectURL(await getBlob(data.piperWasmUrl, blobs));
+	const piperData = URL.createObjectURL(await getBlob(data.piperDataUrl, blobs));
+
+	importScripts(piperJs);
+
+	const module = await createPiper({
+		print:filename => {
+			const item = input.find(item => item.output_file === filename);
+			const file = new File([FS.readFile(filename)], filename, {type:"audio/wav"});
+			self.postMessage({kind:"output", input:item, file});
+		},
+		printErr:message => {
+			self.postMessage({kind:"stderr", message});
+		},
+		locateFile:(url, _scriptDirectory) => {
+			if(url.endsWith(".wasm")) return piperWasm;
+			if(url.endsWith(".data")) return piperData;
+			return url;
+		}
+	});
+
+	const FS = module.FS; 
+	FS.mkdir("/proc/self/exe");
+	FS.mkdir("/model");
+
+	const files = [];
+	let modelFile = "";
+	for(const key of Object.keys(data.voiceFiles)) {
+		// https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/ar/ar_JO/kareem/medium/ar_JO-kareem-medium.onnx
+		const url = `https://huggingface.co/wide-video/piper-voices-${data.version}/resolve/main/${key}`;
+		const filename = key.split("/").pop();
+
+		if(filename.endsWith(".onnx"))
+			modelFile = filename;
+
+		files.push(new File([await getBlob(url, blobs)], filename));
+	}
+
+	FS.mount(module.WORKERFS, {files}, "model");
+
+	module.callMain(["--input", JSON.stringify(input), "--model", `/model/${modelFile}`, "--espeak_data", "/espeak-ng-data"]);
+
+	self.postMessage({kind:"complete"});
+}
+</script>
 <script>
 const VERSION = "v1.0.0";
 
@@ -189,6 +274,11 @@ const inputElement = document.querySelector("#input");
 const voicesElement = document.querySelector("#voices");
 const speakersElement = document.querySelector("#speakers");
 const startButton = document.querySelector("#start");
+const workerBlob = new Blob([document.querySelector('#worker').textContent], {type:"text/javascript"});
+const workerUrl = URL.createObjectURL(workerBlob);
+const piperJsUrl = new URL("piper.js", document.location).href;
+const piperWasmUrl = new URL("piper.wasm", document.location).href;
+const piperDataUrl = new URL("piper.data", document.location).href;
 
 const blobs = {};
 let voices, worker;
@@ -209,8 +299,9 @@ startButton.onclick = () => {
 	logElement.append(create("div", "init", `Input: ${JSON.stringify(input)}`));
 	logElement.append(create("div", "init", `Voice: ${JSON.stringify(voiceFiles)}`));
 
-	worker = new Worker("worker.js");
-	worker.postMessage({kind:"init", version:VERSION, input, voiceFiles, blobs});
+	worker = new Worker(workerUrl);
+	worker.postMessage({kind:"init", version:VERSION, input, voiceFiles, blobs,
+		piperJsUrl, piperWasmUrl, piperDataUrl});
 	worker.addEventListener("message", event => {
 		const data = event.data;
 		switch(data.kind) {

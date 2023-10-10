@@ -1,17 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="theme-color" content="#252525">
+
+	<title>Piper Speech Synthesizer Voice Samples</title>
+
+	<meta name="description" content="Online speech synthesizer in WebAssembly (WASM).">
+	<meta name="author" content="Jozef Chúťka">
+	<meta property="og:title" content="Piper Online Voice Samples">
+	<meta property="og:description" content="Online speech synthesizer in WebAssembly (WASM).">
+	<meta property="og:locale" content="en_US">
+	<meta property="og:type" content="website">
+	<meta name="twitter:site" content="@wide_video">
+</head>
+<body>
 <style>
-h1 {
-	font-size: 1em;
-	margin: 0 0 .2em 0;
+:root {
+	--color1: #007cc9;
+	--color2: #3c3c3c;
+	--color3: #666;
+	--color4: #252525;
+	--color5: #ccc;
 }
+
+:where(:not(audio, img, select)) {
+	all: unset;
+	display: revert;
+	box-sizing: border-box;
+}
+
+html {
+	font: 13px/1.4em "Segoe WPC", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+	background: var(--color4);
+	color: var(--color5);
+	margin: 1rem;
+}
+
+h1 {
+	color: var(--color5);
+	font-weight: bold;
+	font-size: 1.1rem;
+}
+
 section {
 	margin: 0 0 1em 0;
 }
+
 button {
-	all: initial;
+	color: var(--color1);
 	text-decoration: underline;
 	display: inline-block;
-	width: 6em;
+	width: 7rem;
+	cursor: pointer;
 }
+
 audio {
 	position: fixed;
 	right: 0;
@@ -20,7 +64,6 @@ audio {
 </style>
 
 <audio controls crossorigin="anonymous"></audio>
-<body>
 <script>
 
 (async () => {
@@ -72,3 +115,5 @@ document.querySelectorAll("div[data-src]").forEach(element => {
 })()
 
 </script>
+</body>
+</html>
