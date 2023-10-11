@@ -23,6 +23,8 @@
 	--color3: #666;
 	--color4: #252525;
 	--color5: #ccc;
+
+	--playIcon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path fill="%23007cc9" d="m380-300 280-180-280-180v360ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>');
 }
 
 :where(:not(audio, img, select)) {
@@ -39,7 +41,6 @@ html {
 }
 
 h1 {
-	color: var(--color5);
 	font-weight: bold;
 	font-size: 1.1rem;
 }
@@ -50,10 +51,11 @@ section {
 
 button {
 	color: var(--color1);
-	text-decoration: underline;
 	display: inline-block;
-	width: 7rem;
+	width: 15rem;
 	cursor: pointer;
+	background: var(--playIcon) center left / 1.4em no-repeat;
+	padding-left: 1.5em;
 }
 
 audio {
@@ -67,10 +69,11 @@ audio {
 <script>
 
 (async () => {
+const VERSION = "v1.0.0";
 
 const body = document.body;
 const audio = document.querySelector("audio");
-const voices = await (await fetch("voices-v1.0.0.json")).json();
+const voices = await (await fetch(`voices-${VERSION}.json`)).json();
 
 function create(type, content) {
 	const result = document.createElement(type);
@@ -79,9 +82,9 @@ function create(type, content) {
 	return result;
 }
 
-function createSample(path, speaker) {
-	const url = `https://rhasspy.github.io/piper-samples/samples/${path}/speaker_${speaker}.mp3`;
-	const result = create("button", `speaker ${speaker}`);
+function createSample(path, speakerKey, speakerId) {
+	const url = `https://raw.githubusercontent.com/wide-video/piper-samples/${VERSION}/samples/${path}/speaker_${speakerId}.mp3`;
+	const result = create("button", `${speakerKey}`);
 	result.onclick = () => {
 		audio.src = url;
 		audio.play();
@@ -89,20 +92,37 @@ function createSample(path, speaker) {
 	return result;
 }
 
+let lastLanguage;
 for(const [key, voice] of Object.entries(voices)) {
-	const speakers = Object.values(voice.speaker_id_map);
+	const speakers = Object.entries(voice.speaker_id_map);
 	const pathChunks = Object.keys(voice.files)[0].split("/");
 	pathChunks.pop();
 	const path = pathChunks.join("/");
 
-	body.append(create("h1", key));
+	if(lastLanguage !== voice.language.name_native) {
+		lastLanguage = voice.language.name_native;
+
+		const label = `${voice.language.name_native} (${voice.language.name_english}, ${voice.language.country_english})`;
+
+		body.append(create("h1", label));
+	}
+
+	let stars = "⭐";
+	if(voice.quality === "low")
+		stars += stars;
+	else if(voice.quality === "medium")
+		stars += stars + stars;
+	else if(voice.quality === "high")
+		stars += stars + stars + stars;
+
+	body.append(create("h2", `${voice.name} ${stars}`));
 	const samples = create("section");
 
 	if(!speakers.length)
-		samples.append(createSample(path, 0));
+		samples.append(createSample(path, "default", 0));
 	else
-		for(const speaker of speakers)
-			samples.append(createSample(path, speaker));
+		for(const [speakerKey, speakerId] of speakers)
+			samples.append(createSample(path, speakerKey, speakerId));
 
 	body.append(samples);
 }
