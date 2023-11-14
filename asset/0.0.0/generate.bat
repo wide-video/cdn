@@ -105,3 +105,8 @@ REM customized by hand
 REM curl https://github.com/ChineseCubes/react-vtt/raw/master/examples/demo/assets/chocolate_rain.vtt -L --output chocolate_rain_en_0MB.vtt
 
 REM downloaded from youtube https://www.youtube.com/watch?v=MnrJzXM7a6o to jobs_h264_640x352_30fps_aac_stereo_619s_15MB.mp4
+
+curl https://dotlottie.io/sample_files/animation.lottie --output lottie_500x500_60fps_3s_0M.lottie
+curl https://dotlottie.io/sample_files/animation-external-image.lottie --output lottie_external_image_500x500_60fps_3s_0M.lottie
+curl https://dotlottie.io/sample_files/animation-inline-image.lottie --output lottie_inlines_image_500x500_60fps_3s_0M.lottie
+curl https://fonts.gstatic.com/s/e/notoemoji/latest/1f980/lottie.json --output lottie_crab_512x512_60fps_2s_0M.json
