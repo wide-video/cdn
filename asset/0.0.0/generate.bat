@@ -106,7 +106,10 @@ REM curl https://github.com/ChineseCubes/react-vtt/raw/master/examples/demo/asse
 
 REM downloaded from youtube https://www.youtube.com/watch?v=MnrJzXM7a6o to jobs_h264_640x352_30fps_aac_stereo_619s_15MB.mp4
 
-curl https://dotlottie.io/sample_files/animation.lottie --output lottie_500x500_60fps_3s_0M.lottie
+curl https://dotlottie.io/sample_files/animation.lottie --output lottie_generic_500x500_60fps_3s_0M.lottie
 curl https://dotlottie.io/sample_files/animation-external-image.lottie --output lottie_external_image_500x500_60fps_3s_0M.lottie
 curl https://dotlottie.io/sample_files/animation-inline-image.lottie --output lottie_inlines_image_500x500_60fps_3s_0M.lottie
 curl https://fonts.gstatic.com/s/e/notoemoji/latest/1f980/lottie.json --output lottie_crab_512x512_60fps_2s_0M.json
+curl https://fonts.gstatic.com/s/e/notoemoji/latest/1f389/lottie.json --output lottie_party_1024x1024_60fps_1s_0M.lottie
+
+REM downloaded from https://app.lottiefiles.com/animation/f77a0045-b43d-465b-b12e-101b7aebaa61 to lottie_panda_182x182_60fps_2s_0M.lottie
