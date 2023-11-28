@@ -87,6 +87,9 @@ ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:t
 ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_30fps_10s_0MB.mp4
 ffmpeg -filter_complex "color=black:36x36:24,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=24:fontsize=8:fontcolor=white" -t 60 -c:v libx265 -tag:v hvc1 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h265_36x36_24fps_0MB.mp4
 
+ffmpeg -filter_complex "color=duration=4:c=black:s=200x200:rate=24,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=24:fontsize=16:fontcolor=white,sine=duration=2:frequency=440:sample_rate=48000:beep_factor=2" -c:v libx264 -preset:v veryslow -c:a aac -ac 2 -y counter_video_4s_audio_2s.mp4 -y
+ffmpeg -filter_complex "color=duration=4:c=black:s=200x200:rate=24,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=24:fontsize=16:fontcolor=white,sine=duration=8:frequency=440:sample_rate=48000:beep_factor=2" -c:v libx264 -preset:v veryslow -c:a aac -ac 2 -y counter_video_4s_audio_8s.mp4 -y
+
 curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_0.jpg --output rotated_jpeg_1200x1800_0_0MB.jpg
 curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_1.jpg --output rotated_jpeg_1200x1800_1_0MB.jpg
 curl https://raw.githubusercontent.com/recurser/exif-orientation-examples/master/Portrait_2.jpg --output rotated_jpeg_1200x1800_2_0MB.jpg
