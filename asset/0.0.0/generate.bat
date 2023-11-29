@@ -116,3 +116,7 @@ curl https://fonts.gstatic.com/s/e/notoemoji/latest/1f980/lottie.json --output l
 curl https://fonts.gstatic.com/s/e/notoemoji/latest/1f389/lottie.json --output lottie_party_1024x1024_60fps_1s_0M.lottie
 
 REM downloaded from https://app.lottiefiles.com/animation/f77a0045-b43d-465b-b12e-101b7aebaa61 to lottie_panda_182x182_60fps_2s_0M.lottie
+
+REM download from https://rive.app/community/5965-11570-viking-strike/ to rive_viking_680x500_60fps_0M.riv
+REM download from https://rive.app/community/515-981-buttery-smooth-animations/ to rive_van_1920x1080_60fps_0M.riv
+REM download from https://rive.app/community/5998-11669-swinging-monkey/ to rive_monkey_1080x1080_60fps_0MB.riv
