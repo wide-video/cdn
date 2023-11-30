@@ -120,3 +120,4 @@ REM downloaded from https://app.lottiefiles.com/animation/f77a0045-b43d-465b-b12
 REM download from https://rive.app/community/5965-11570-viking-strike/ to rive_viking_680x500_60fps_0M.riv
 REM download from https://rive.app/community/515-981-buttery-smooth-animations/ to rive_van_1920x1080_60fps_0M.riv
 REM download from https://rive.app/community/5998-11669-swinging-monkey/ to rive_monkey_1080x1080_60fps_0MB.riv
+REM download from https://rive.app/community/5063-10215-sk8r-boi/ to rive_sk8r_alpha_500x500_60fps_0MB.riv
