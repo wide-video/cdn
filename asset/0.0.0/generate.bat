@@ -121,3 +121,10 @@ REM download from https://rive.app/community/5965-11570-viking-strike/ to rive_v
 REM download from https://rive.app/community/515-981-buttery-smooth-animations/ to rive_van_1920x1080_60fps_0M.riv
 REM download from https://rive.app/community/5998-11669-swinging-monkey/ to rive_monkey_1080x1080_60fps_0MB.riv
 REM download from https://rive.app/community/5063-10215-sk8r-boi/ to rive_sk8r_alpha_500x500_60fps_0MB.riv
+
+REM download from https://cdn.svgator.com/assets/main-page/fold2.5/svgator-demo-files.zip to svg_animated_css_bell_200x150_0MB.svg
+REM download from https://cdn.svgator.com/assets/main-page/fold2.5/svgator-demo-files.zip to svg_animated_script_bell_200x150_0MB.svg
+REM download from https://cdn.svgator.com/images/2023/03/stopwatch-svg-animation.svg to svg_animated_stopwatch_263x150_0MB.svg
+REM download from https://cdn.svgator.com/images/2023/03/message-delivered-to-mailbox-animation.svg to svg_animated_mailbox_263x150_0MB.svg
+
+ffmpeg -i blured_jpeg_300x600_0MB.jpg -i bbb_av1_640x360_25fps_aac_stereo_5s_0MB.mp4 -i logo_jpeg_510x93_0MB.jpg -i sintel_h264_1920x818_24fps_ac3_stereo_30s_6MB.mp4 -c copy -map 0:v -map 1:a -map 1:v -map 2:v -map 3:v -map 3:a  mix_iaviva_6MB.mp4
