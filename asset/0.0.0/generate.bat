@@ -128,3 +128,7 @@ REM download from https://cdn.svgator.com/images/2023/03/stopwatch-svg-animation
 REM download from https://cdn.svgator.com/images/2023/03/message-delivered-to-mailbox-animation.svg to svg_animated_mailbox_263x150_0MB.svg
 
 ffmpeg -i blured_jpeg_300x600_0MB.jpg -i bbb_av1_640x360_25fps_aac_stereo_5s_0MB.mp4 -i logo_jpeg_510x93_0MB.jpg -i sintel_h264_1920x818_24fps_ac3_stereo_30s_6MB.mp4 -c copy -map 0:v -map 1:a -map 1:v -map 2:v -map 3:v -map 3:a  mix_iaviva_6MB.mp4
+
+REM used https://obsproject.com/ to create VFR for https://youtu.be/xKYd4vFwdA8?si=EUPWmWwG-JkrZ8p6 
+REM obs_synctest_h264_960x540_vfr_aac_stereo_22s_7MB.mkv `ffmpeg -i INPUT -vf vfrdet -an -f null -`
+ffmpeg -i obs_synctest_h264_960x540_vfr_aac_stereo_22s_7MB.mkv -c copy obs_synctest_h264_960x540_vfr_aac_stereo_22s_7MB.mp4
