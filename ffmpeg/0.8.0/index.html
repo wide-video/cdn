@@ -411,6 +411,7 @@ templatesSelect.append(create("option", "List codecs", {value:`ffmpeg -codecs`})
 templatesSelect.append(create("option", "List encoders", {value:`ffmpeg -encoders`}));
 templatesSelect.append(create("option", "List decoders", {value:`ffmpeg -decoders`}));
 templatesSelect.append(create("option", "List formats", {value:`ffmpeg -formats`}));
+templatesSelect.append(create("option", "List filters", {value:`ffmpeg -filters`}));
 
 templatesSelect.append(create("option", "SMPTE Color Bars", 
 	{value:`ffmpeg -filter_complex smptehdbars=size=320x240:rate=30000/1001;sine=frequency=440:sample_rate=48000:beep_factor=2
