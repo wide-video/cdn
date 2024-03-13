@@ -132,3 +132,9 @@ ffmpeg -i blured_jpeg_300x600_0MB.jpg -i bbb_av1_640x360_25fps_aac_stereo_5s_0MB
 REM used https://obsproject.com/ to create VFR for https://youtu.be/xKYd4vFwdA8?si=EUPWmWwG-JkrZ8p6 
 REM obs_synctest_h264_960x540_vfr_aac_stereo_22s_7MB.mkv `ffmpeg -i INPUT -vf vfrdet -an -f null -`
 ffmpeg -i obs_synctest_h264_960x540_vfr_aac_stereo_22s_7MB.mkv -c copy obs_synctest_h264_960x540_vfr_aac_stereo_22s_7MB.mp4
+
+ffmpeg -i premultiplyTest_png_256x256_0MB.png -f webm -vcodec libvpx -auto-alt-ref 0 -r 1 -t 1 -y premultiplyTest_vp8_256x256_1fps_1s_0MB.webm
+ffmpeg -i premultiplyTest_png_256x256_0MB.png -f webm -vcodec libvpx-vp9 -auto-alt-ref 0 -r 1 -t 1 -y premultiplyTest_vp9_256x256_1fps_1s_0MB.webm
+ffmpeg -i premultiplyTest_png_256x256_0MB.png -f webm -vcodec libvpx-vp9 -auto-alt-ref 0 -r 1 -t 1 -y premultiplyTest_vp9_256x256_1fps_1s_0MB.mp4
+ffmpeg -c:v libvpx-vp9 -i premultiplyTest_vp9_256x256_1fps_1s_0MB.webm -vframes 1 -f rawvideo -vcodec rawvideo -pix_fmt rgba premultiplyTest_rgba_256x256_0MB.rgba -y
+ffmpeg -i premultiplyTest_png_256x256_0MB.png -vcodec hevc_videotoolbox -r 1 -t 1 -vtag hvc1 -alpha_quality 1 -y premultiplyTest_h265_256x256_1fps_1s_0MB.mp4
