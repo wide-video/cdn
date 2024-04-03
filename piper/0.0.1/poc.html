@@ -1,0 +1,34 @@
+<script src="piper_phonemize.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/onnxruntime-web/1.17.1/ort.min.js"></script>
+<script>
+(async () => {
+	const input = "Feedback must be timely and accurate throughout the project.";
+	const modelUrl = "https://huggingface.co/wide-video/piper-voices-v1.0.1/resolve/main/en/en_US/hfc_male/medium/en_US-hfc_male-medium.onnx";
+	const modelConfig = await (await fetch(`${modelUrl}.json`)).json();
+	const sampleRate = modelConfig.audio.sample_rate;
+	const numChannels = 1;
+	const noiseScale = modelConfig.inference.noise_scale;
+	const lengthScale = modelConfig.inference.length_scale;
+	const noiseW = modelConfig.inference.noise_w;
+
+	const phonemeIds = await new Promise(async resolve =>
+		(await createPiperPhonemize({print:data => resolve(JSON.parse(data).phoneme_ids)}))
+			.callMain(["-l", "en-us", "--input", JSON.stringify([{text:input}]), "--espeak_data", "/espeak-ng-data"]));
+
+	const session = await ort.InferenceSession.create(modelUrl);
+	const {output:{data:pcm}} = await session.run({
+		input: new ort.Tensor("int64", phonemeIds, [1, phonemeIds.length]),
+		input_lengths: new ort.Tensor("int64", [phonemeIds.length]),
+		scales: new ort.Tensor("float32", [noiseScale, lengthScale, noiseW])
+	});
+
+	const url = URL.createObjectURL(new Blob([pcm], {type:"application/octet-stream"}));
+
+	document.body.innerHTML = `
+		<p>${input}</p>
+		<p>[${phonemeIds.join(", ")}]</p>
+		<a href="${url}">${url} (${pcm.buffer.byteLength}bytes)</a>	
+		<pre>ffmpeg -f f32le -ar ${sampleRate} -ac ${numChannels} -i ${url.substr(-36)} out.mp3 -y</pre>`;
+})()
+</script>
+<body></body>
