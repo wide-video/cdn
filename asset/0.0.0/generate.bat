@@ -52,7 +52,9 @@ ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "
 
 ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "fps=10,scale=320x180" -t 5 -f apng -loop 0 -y bbb_apng_320x180_10fps_5s_5MB.png
 
-ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "fps=15,scale=640x360" -t 5 -loop 0 -y bbb_avif_640x360_15fps_5s_0MB.avif
+ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "fps=15,scale=640x360" -t 5 -loop 0 -y bbb_av1_640x360_15fps_5s_0MB.avif
+
+ffmpeg -ss 45 -i bbb_h264_1920x1080_60fps_mp3_stereo_ac3_51_634s_355MB.mp4 -vf "fps=15,scale=640x360" -t 5 -loop 0 -y bbb_mjpeg_640x360_15fps_5s_0MB.mjpeg
 
 curl http://ftp.nluug.nl/pub/graphics/blender/demo/movies/Sintel.2010.1080p.mkv --output sintel_h264_1920x818_24fps_ac3_51_888s_1172MB.mkv
 
@@ -91,8 +93,10 @@ copy sf_aac_stereo_203s_3MB.m4a "sf_aac_stereo_203s_3MB_chars čř.m4a"
 
 ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f matroska -movflags +faststart -y counter_h264_36x36_23.976fps_10s_0MB.mkv
 ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_23.976fps_10s_0MB.mp4
+ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -y counter_gif_36x36_23.976fps_10s_0MB.gif
 ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f matroska -movflags +faststart -y counter_h264_36x36_30fps_10s_0MB.mkv
 ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_30fps_10s_0MB.mp4
+ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -y counter_gif_36x36_30fps_10s_0MB.gif
 ffmpeg -filter_complex "color=black:36x36:24,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=24:fontsize=8:fontcolor=white" -t 60 -c:v libx265 -tag:v hvc1 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h265_36x36_24fps_0MB.mp4
 
 ffmpeg -filter_complex "color=duration=4:c=black:s=200x200:rate=24,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=24:fontsize=16:fontcolor=white,sine=duration=2:frequency=440:sample_rate=48000:beep_factor=2" -c:v libx264 -preset:v veryslow -c:a aac -ac 2 -y counter_video_4s_audio_2s.mp4 -y
@@ -146,3 +150,5 @@ ffmpeg -i premultiplyTest_png_256x256_0MB.png -f webm -vcodec libvpx-vp9 -auto-a
 ffmpeg -i premultiplyTest_png_256x256_0MB.png -f webm -vcodec libvpx-vp9 -auto-alt-ref 0 -r 1 -t 1 -y premultiplyTest_vp9_256x256_1fps_1s_0MB.mp4
 ffmpeg -c:v libvpx-vp9 -i premultiplyTest_vp9_256x256_1fps_1s_0MB.webm -vframes 1 -f rawvideo -vcodec rawvideo -pix_fmt rgba premultiplyTest_rgba_256x256_0MB.rgba -y
 ffmpeg -i premultiplyTest_png_256x256_0MB.png -vcodec hevc_videotoolbox -r 1 -t 1 -vtag hvc1 -alpha_quality 1 -y premultiplyTest_h265_256x256_1fps_1s_0MB.mp4
+ffmpeg -i premultiplyTest_png_256x256_0MB.png -filter_complex "[0]split[v][v1];[v1]alphaextract[v1]" -map "[v]" -map "[v1]" -vcodec libaom-av1 -r 1 -t 1 -y premultiplyTest_av1_256x256_1fps_1s_0MB.avif
+ffmpeg -i premultiplyTest_png_256x256_0MB.png -r 1 -t 1 -y premultiplyTest_webp_256x256_1fps_1s_0MB.webp
