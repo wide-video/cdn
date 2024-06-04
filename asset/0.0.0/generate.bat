@@ -60,6 +60,8 @@ curl http://ftp.nluug.nl/pub/graphics/blender/demo/movies/Sintel.2010.1080p.mkv 
 
 ffmpeg -ss 120 -i sintel_h264_1920x818_24fps_ac3_51_888s_1172MB.mkv -c:v libx264 -pix_fmt:v yuv420p -crf:v 23 -profile:v high -preset:v veryslow -c:a aac -ac 2 -f mp4 -movflags +faststart -t 30 -y sintel_h264_1920x818_24fps_aac_stereo_30s_6MB.mp4
 
+ffmpeg -ss 120 -i sintel_h264_1920x818_24fps_ac3_51_888s_1172MB.mkv -vf "scale=640:-2" -c:v h264_videotoolbox -pix_fmt:v yuv420p -c:a aac -ac 2 -g 300 -bf 1 -map 0:v -map 0:a -f mp4 -t 13 -map_chapters -1 -y sintel_h264_640x272_24fps_B_aac_stereo_13s_0MB.mp4
+
 ffmpeg -ss 120 -i sintel_h264_1920x818_24fps_ac3_51_888s_1172MB.mkv -c:v libx264 -pix_fmt:v yuv420p -crf:v 23 -profile:v high -preset:v veryslow -c:a ac3 -ac 2 -f mp4 -movflags +faststart -t 30 -y sintel_h264_1920x818_24fps_ac3_stereo_30s_6MB.mp4
 
 ffmpeg -ss 120 -i sintel_h264_1920x818_24fps_ac3_51_888s_1172MB.mkv -vn -c:a ac3 -ac 2 -t 30 -y sintel_ac3_stereo_30s_1MB.ac3
