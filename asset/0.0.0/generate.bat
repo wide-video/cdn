@@ -149,7 +149,8 @@ ffmpeg -i obs_synctest_h264_960x540_vfr_aac_stereo_22s_7MB.mkv -c copy obs_synct
 
 ffmpeg -i premultiplyTest_png_256x256_0MB.png -f webm -vcodec libvpx -auto-alt-ref 0 -r 1 -t 1 -y premultiplyTest_vp8_256x256_1fps_1s_0MB.webm
 ffmpeg -i premultiplyTest_png_256x256_0MB.png -f webm -vcodec libvpx-vp9 -auto-alt-ref 0 -r 1 -t 1 -y premultiplyTest_vp9_256x256_1fps_1s_0MB.webm
-ffmpeg -i premultiplyTest_png_256x256_0MB.png -f webm -vcodec libvpx-vp9 -auto-alt-ref 0 -r 1 -t 1 -y premultiplyTest_vp9_256x256_1fps_1s_0MB.mp4
+ffmpeg -i premultiplyTest_png_256x256_0MB.png -f mp4 -vcodec libvpx-vp9 -auto-alt-ref 0 -r 1 -t 1 -y premultiplyTest_vp9_256x256_1fps_1s_0MB.mp4
+ffmpeg -i premultiplyTest_png_256x256_0MB.png -f matroska -vcodec libvpx-vp9 -auto-alt-ref 0 -r 1 -t 1 -y premultiplyTest_vp9_256x256_1fps_1s_0MB.mkv
 ffmpeg -c:v libvpx-vp9 -i premultiplyTest_vp9_256x256_1fps_1s_0MB.webm -vframes 1 -f rawvideo -vcodec rawvideo -pix_fmt rgba premultiplyTest_rgba_256x256_0MB.rgba -y
 ffmpeg -i premultiplyTest_png_256x256_0MB.png -vcodec hevc_videotoolbox -r 1 -t 1 -vtag hvc1 -alpha_quality 1 -y premultiplyTest_h265_256x256_1fps_1s_0MB.mp4
 ffmpeg -i premultiplyTest_png_256x256_0MB.png -filter_complex "[0]split[v][v1];[v1]alphaextract[v1]" -map "[v]" -map "[v1]" -vcodec libaom-av1 -r 1 -t 1 -y premultiplyTest_av1_256x256_1fps_1s_0MB.avif
