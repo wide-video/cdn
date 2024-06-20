@@ -155,3 +155,9 @@ ffmpeg -c:v libvpx-vp9 -i premultiplyTest_vp9_256x256_1fps_1s_0MB.webm -vframes 
 ffmpeg -i premultiplyTest_png_256x256_0MB.png -vcodec hevc_videotoolbox -r 1 -t 1 -vtag hvc1 -alpha_quality 1 -y premultiplyTest_h265_256x256_1fps_1s_0MB.mp4
 ffmpeg -i premultiplyTest_png_256x256_0MB.png -filter_complex "[0]split[v][v1];[v1]alphaextract[v1]" -map "[v]" -map "[v1]" -vcodec libaom-av1 -r 1 -t 1 -y premultiplyTest_av1_256x256_1fps_1s_0MB.avif
 ffmpeg -i premultiplyTest_png_256x256_0MB.png -r 1 -t 1 -y premultiplyTest_webp_256x256_1fps_1s_0MB.webp
+
+REM downloaded via cobalt.tools https://www.youtube.com/watch?v=NbMMIQgEjDM to metallica_opus_stereo_349s_4MB.opus
+REM downloaded via cobalt.tools https://www.youtube.com/watch?v=zA1zCZI_wxk to metallica_opus_stereo_382s_6MB.opus
+
+REM downloaded via cobalt.tools https://www.youtube.com/watch?v=NJfLFjauXbs to hanszimmer_opus_stereo_9541s_151MB.opus
+REM downloaded via cobalt.tools https://www.youtube.com/watch?v=kottjfEd7Zw to hanszimmer_opus_stereo_463s_7MB.opus
