@@ -168,3 +168,5 @@ REM downloaded via cobalt.tools https://www.youtube.com/watch?v=zA1zCZI_wxk to m
 
 REM downloaded via cobalt.tools https://www.youtube.com/watch?v=NJfLFjauXbs to hanszimmer_opus_stereo_9541s_151MB.opus
 REM downloaded via cobalt.tools https://www.youtube.com/watch?v=UMUCtNtKlJ0 to hanszimmer_opus_stereo_463s_7MB.opus
+
+REM crbug_333325020.h264 is first 3000 bytes of h264 VideoEncoder chunk generated in studio using heavy noise filter ( related to https://localhost/wide.video/app-poc/html-VideoEncoder/crbug-VideoFrame-bitrate.html )
