@@ -100,14 +100,22 @@ curl http://ftp.nluug.nl/pub/graphics/blender/demo/movies/BBB/bbb_sunflower_2160
 copy sintel_vp8_1920x818_24fps_vorbis_stereo_30s_1MB.webm "sintel_vp8_1920x818_24fps_vorbis_stereo_30s_1MB_chars čř.webm"
 copy sf_aac_stereo_203s_3MB.m4a "sf_aac_stereo_203s_3MB_chars čř.m4a"
 
-ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f matroska -movflags +faststart -y counter_h264_36x36_23.976fps_10s_0MB.mkv
+ffmpeg -filter_complex "color=black:36x36:1,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=1:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_1fps_10s_0MB.mp4
+ffmpeg -filter_complex "color=black:36x36:10,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=10:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_10fps_10s_0MB.mp4
 ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_23.976fps_10s_0MB.mp4
-ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -y counter_gif_36x36_23.976fps_10s_0MB.gif
-ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -c:v mpeg1video -y counter_mpeg1_36x36_23.976fps_10s_0MB.mp4
-
-ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f matroska -movflags +faststart -y counter_h264_36x36_30fps_10s_0MB.mkv
+ffmpeg -filter_complex "color=black:36x36:24,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=24:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_24fps_10s_0MB.mp4
+ffmpeg -filter_complex "color=black:36x36:25,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=25:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_25fps_10s_0MB.mp4
 ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_30fps_10s_0MB.mp4
+ffmpeg -filter_complex "color=black:36x36:60,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=60:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_60fps_10s_0MB.mp4
+ffmpeg -filter_complex "color=black:36x36:120,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=120:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_120fps_10s_0MB.mp4
+
+ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f matroska -movflags +faststart -y counter_h264_36x36_23.976fps_10s_0MB.mkv
+ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f matroska -movflags +faststart -y counter_h264_36x36_30fps_10s_0MB.mkv
+
+ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -y counter_gif_36x36_23.976fps_10s_0MB.gif
 ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -y counter_gif_36x36_30fps_10s_0MB.gif
+
+ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -c:v mpeg1video -y counter_mpeg1_36x36_23.976fps_10s_0MB.mp4
 ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -c:v mpeg1video -y counter_mpeg1_36x36_30fps_10s_0MB.mp4
 
 ffmpeg -filter_complex "color=black:36x36:24,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=24:fontsize=8:fontcolor=white" -t 60 -c:v libx265 -tag:v hvc1 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h265_36x36_24fps_0MB.mp4
