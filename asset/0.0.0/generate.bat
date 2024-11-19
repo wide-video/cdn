@@ -108,6 +108,7 @@ ffmpeg -filter_complex "color=black:36x36:25,drawtext=fontfile=dogicapixel.ttf:t
 ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_30fps_10s_0MB.mp4
 ffmpeg -filter_complex "color=black:36x36:60,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=60:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_60fps_10s_0MB.mp4
 ffmpeg -filter_complex "color=black:36x36:120,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=120:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_120fps_10s_0MB.mp4
+ffmpeg -filter_complex "color=black:36x36:240,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=240:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f mp4 -movflags +faststart -y counter_h264_36x36_240fps_10s_0MB.mp4
 
 ffmpeg -filter_complex "color=black:36x36:23.976,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=23.976:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f matroska -movflags +faststart -y counter_h264_36x36_23.976fps_10s_0MB.mkv
 ffmpeg -filter_complex "color=black:36x36:30,drawtext=fontfile=dogicapixel.ttf:text='%%{frame_num}':rate=30:fontsize=8:fontcolor=white" -t 10 -c:v libx264 -preset:v veryslow -f matroska -movflags +faststart -y counter_h264_36x36_30fps_10s_0MB.mkv
