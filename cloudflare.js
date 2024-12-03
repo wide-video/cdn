@@ -35,7 +35,8 @@ function renameBrFilesSync(dir) {
 
 		for(const ignoredPath of ignoredPaths)
 			if(filePath.match(ignoredPath)) {
-				console.log(`Ignore path ${filePath} by rule ${ignoredPath}`);
+				console.log(`Delete path ${filePath} by rule ${ignoredPath}`);
+				fs.rmSync(filePath, {recursive:true});
 				continue fileLoop;
 			}
 
