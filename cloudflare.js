@@ -2,7 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const root = __dirname;
 
-const ignoredPaths = [
+// some old versions can be removed
+// some files are > 25MB https://developers.cloudflare.com/pages/platform/limits/#file-size
+const removePaths = [
 	/\/ffmpeg\/0\.[0-7]/,
 	/\/piper\/0\.0\.0\//,
 	/\/rive\/2\.7/
@@ -34,9 +36,9 @@ function renameBrFilesSync(dir) {
 		const filePath = path.join(dir, file);
 		const stats = fs.statSync(filePath);
 
-		for(const ignoredPath of ignoredPaths)
-			if(filePath.match(ignoredPath)) {
-				console.log(`Delete path ${filePath} by rule ${ignoredPath}`);
+		for(const removePath of removePaths)
+			if(filePath.match(removePath)) {
+				console.log(`Removed: ${filePath} by rule ${removePath}`);
 				fs.rmSync(filePath, {recursive:true});
 				continue fileLoop;
 			}
