@@ -8,8 +8,9 @@ const ignoredPaths = [
 	/\/rive\/2\.7/
 ]
 
+// cloudflare limit is 100 header rules
+// https://developers.cloudflare.com/pages/configuration/headers/
 let headerRulesCount = 1;
-
 let headers = `/*
 	Access-Control-Allow-Headers: *
 	Access-Control-Allow-Origin: *
@@ -47,28 +48,33 @@ function renameBrFilesSync(dir) {
 		
 		if(stats.isFile() && path.extname(file) === '.br') {
 			const newFilePath = filePath.replace(/\.br$/, '');
+			const newRelativeFilePath = path.relative(root, newFilePath);
+
 			fs.renameSync(filePath, newFilePath);
 			console.log(`Renamed: ${filePath} -> ${newFilePath}`);
 
-			headerRulesCount++;
-			headers += `/${path.relative(root, newFilePath)}\n`
-				+ `\tContent-Encoding: br\n`;
-
+			let contentLength = 0;
 			if(htaccess) {
-				const filePattern = file.replaceAll(".", "\\.").replace(".br", "\\.br");
+				const filePattern = file.replaceAll(".", "\\\\?.");
 				const pattern = `<FilesMatch.*?${filePattern}.*?x-content-length (\\d+)`;
 				const match = htaccess.match(new RegExp(pattern, "s"));
 				if(match && match.length > 0)
-					headers += `\tx-content-length: ${match[1]}\n`;
+					contentLength = match[1];
 			}
 
-			headers += "\n";
+			if(!contentLength)
+				throw new Error(`ContentLength not available for ${filePath}`);
+
+			headerRulesCount++;
+			headers += `/${newRelativeFilePath}\n`
+				+ `\tContent-Encoding: br\n`
+				+ `\tx-content-length: ${contentLength}\n\n`;
 		}
 	}
 }
 
 renameBrFilesSync(root);
 
-console.log(`creating _headers files with ${headerRulesCount} rules.`)
+console.log(`creating _headers file with ${headerRulesCount} rules.`);
 console.log(headers);
 fs.writeFileSync("_headers", headers, 'utf8');
