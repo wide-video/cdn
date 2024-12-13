@@ -183,3 +183,5 @@ REM downloaded via cobalt.tools https://www.youtube.com/watch?v=NJfLFjauXbs to h
 REM downloaded via cobalt.tools https://www.youtube.com/watch?v=UMUCtNtKlJ0 to hanszimmer_opus_stereo_463s_7MB.opus
 
 REM crbug_333325020.h264 is first 3000 bytes of h264 VideoEncoder chunk generated in studio using heavy noise filter ( related to https://localhost/wide.video/app-poc/html-VideoEncoder/crbug-VideoFrame-bitrate.html )
+
+curl https://www.elecard.com/storage/video/NovosobornayaSquare_1920x1080.mp4 --output nss_h266_1920x1080_60fps_10s_4MB.mp4

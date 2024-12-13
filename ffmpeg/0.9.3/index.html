@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#181818">
+
+<title>FFmpeg Online</title>
+
+<link rel="shortcut icon" type="image/png" href="favicon.png" />
+
+<meta name="description" content="FFmpeg Online">
+<meta name="author" content="Jozef Chúťka">
+<meta property="og:title" content="FFmpeg Online">
+<meta property="og:description" content="FFmpeg Online">
+<meta property="og:image:alt" content="FFmpeg Online">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ffmpeg.wide.video">
+<meta name="twitter:site" content="@wide_video">
+<meta name="twitter:card" content="summary_large_image">
+
+<style>
+*:where(:not(audio, canvas, dialog, iframe, img, input[type="checkbox"], input[type="range"], option, select, svg, video):not(svg *, symbol *)) {
+	all: unset;
+	display: revert;
+	cursor: revert;
+}
+
+*,
+*:before,
+*:after {
+	box-sizing: border-box;
+}
+
+/* fix firefox caret */
+*[contenteditable=true] {
+	-moz-user-modify: read-write;
+}
+
+/* fix safari caret */
+*[contenteditable=plaintext-only] {
+	-webkit-user-modify: read-write-plaintext-only;
+}
+
+:root {
+	--color-text: #ccc;
+	--color-background: #181818;
+	--color-error: #750000;
+	--color-running: #3b3b3b;
+	--color-command-program: #dcdcaa;
+	--color-command-arg: #ce9178;
+	--color-command-arg-modifier: #569cd6;
+	--color-command-arg-number: #b5cea8;
+	--color-button-text: #fff;
+	--color-button-background: #0078d4;
+	--color-button-hover-background: #026ec1;
+
+	--padding: 8px;
+	--padding2x: 16px;
+
+	--icon-drop: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="%23ccc"><path d="M200-120q-33 0-56.5-23.5T120-200v-400q0-33 23.5-56.5T200-680h160v80H200v400h560v-400H600v-80h160q33 0 56.5 23.5T840-600v400q0 33-23.5 56.5T760-120H200Zm280-200L320-480l56-56 64 63v-487h80v487l64-63 56 56-160 160Z"/></svg>');
+
+	height: 100%;
+	min-height: 100%;
+}
+
+body {
+	min-height: 100%;
+	background: var(--color-background);
+	font-size: 13px;
+
+	&.dragOver::after {
+		content: "";
+		display: block;
+		position: fixed;
+		inset: 0;
+		background: var(--icon-drop) no-repeat center / 10em;
+		backdrop-filter: blur(.2em);
+	}
+}
+
+a {
+	text-decoration: underline;
+}
+
+button {
+	color: var(--color-button-text);
+	background: var(--color-button-background);
+	font-family: "Segoe WPC", "Segoe UI", sans-serif;
+	padding: var(--padding) var(--padding2x);
+	border-radius: 2px;
+
+	&:hover {
+		background: var(--color-button-hover-background);
+	}
+}
+
+strong {
+	font-weight: bold;
+}
+
+#Terminal {
+	font-family: Menlo, Monaco, "Courier New", monospace;
+	font-kerning: none;
+	color: var(--color-text);
+	width: 100%;
+	height: 100%;
+	padding: var(--padding);
+	line-height: 1em; /* fixes chinese characters */
+	white-space: pre-wrap;
+	word-break: break-all;
+
+	.program {
+		color: var(--color-command-program);
+	}
+
+	.arg {
+		color: var(--color-command-arg);
+
+		&.modifier {
+			color: var(--color-command-arg-modifier);
+		}
+
+		&.number {
+			color: var(--color-command-arg-number);
+		}
+	}
+
+	> .log {
+		> :is(.stderr, .stdout) {
+			&.running {
+				background: var(--color-running);
+			}
+
+			&.error {
+				background: var(--color-error);
+			}
+		}
+
+		.embed > iframe {
+			border: none;
+			display: inline-block;
+			width: 360px;
+			height: 250px;
+			margin: 0 3px 3px 0;
+		}
+	}
+
+	> .prompt .input {
+		display: inline;
+		caret-color: var(--color-text);
+	}
+
+	::selection {
+		background: var(--color-text);
+		color: var(--color-background);
+	}
+}
+
+button.start {
+	position: absolute;
+	inset: var(--padding) var(--padding) auto auto;
+}
+</style>
+</head>
+<body>
+<div id="Terminal">initializing...</div>
+</body>
+<script type="javascript/worker" id="ffmpegWorker">"use strict";(()=>{var e="huge",s={apng:"image/apng",avif:"image/avif",bmp:"image/bmp",gif:"image/gif",js:"text/javascript",jpeg:"image/jpeg",jpg:"image/jpeg",mkv:"video/x-matroska",mp3:"audio/mpeg",mp4:"video/mp4",ogg:"video/ogg",png:"image/png",svg:"image/svg+xml",wasm:"application/wasm",wav:"audio/wav",webm:"video/webm",webp:"image/webp"};function t(e){const t=e.lastIndexOf(".");return-1!==t?s[e.substring(t+1).toLowerCase()]:void 0}var i=class{filename;type;buffers=[];buffersSize=0;file;constructor(e,s){this.filename=e,this.type=s}push(e){this.buffers.push(e),this.buffersSize+=e.byteLength,this.buffersSize>=1048576&&this.flush()}flush(){const{buffers:e,buffersSize:s,file:t,filename:i,type:r}=this;return s?(this.file=new File(t?[t,...e]:e,i,r?{type:r}:void 0),this.buffers.length=0,this.buffersSize=0,this.file):t}},r=(e,s)=>self.postMessage(e,s);self.onmessage=async s=>{const{args:n,blobs:a,env:f}=s.data;self.define=(e,s)=>self.createFFmpeg=s(),self.define.amd=!0,await import(f.FFMPEG_MAIN_URL),delete self.define;const o=new WebAssembly.Memory({initial:2048,maximum:65536,shared:!0}),m=await createFFmpeg({stderr:(e,s,t)=>{if(!t)return;const i=e.slice(s,s+t).buffer;r({kind:"stderr",message:i},{transfer:[i]})},stdout:(e,s,t)=>{if(!t)return;const i=e.slice(s,s+t).buffer;r({kind:"stdout",message:i},{transfer:[i]})},tty:(e,s,t,i)=>{const r=d[e.path];return!!r&&(i&&r.push(s.slice(t,t+i).buffer),!0)},printErr:e=>{r({kind:"error",messageOrCode:e})},locateFile:e=>e.endsWith(".wasm")?f.FFMPEG_WASM_URL:e,mainScriptUrlOrBlob:f.FFMPEG_MAIN_URL,wasmMemory:o}),l=m.FS,u="workerfs";l.mkdir(u),l.mount(m.WORKERFS,{blobs:a},u);for(const e of l.readdir(`/${u}`))"."!==e&&".."!==e&&l.symlink(`/${u}/${e}`,`/${e}`);const d={},g=function(s){const t=[],i=`${e}/`;for(const e of s)if(e.startsWith(i)){const s=e.substring(i.length);s&&t.push({arg:e,filename:s})}return t}(n);if(g.length){const{mode:s,rdev:r}=l.stat("/dev/tty");l.mkdir(e);for(const{arg:e,filename:n}of g){l.mknod(e,s,r);const a=t(n);d[`/${e}`]=new i(n,a)}}const c=l.readdir("/");m.onExit=e=>{if(0!==e)return r({kind:"error",messageOrCode:e});const s=[];for(const e of l.readdir("/"))if(!c.includes(e)){const i=l.readFile(e),r=t(e),n=r?{type:r}:void 0;s.push(new File([i.buffer],e,n))}for(const e of Object.values(d)){const t=e.flush();t&&s.push(t)}r({kind:"success",files:s})},m.callMain(n)},self.onunhandledrejection=e=>{throw e.preventDefault(),e.reason}})();</script>
+<script type="module">"use strict";(()=>{function e(e){const t=[],s=e.length;let n=0;for(;n<s;){let i,o=!1,r="";const a=[];for(;n<s;){const t=e[n++];if(o)"\r"!==t&&"\n"!==t&&(r+=t),"\r"===t&&"\n"===e[n]&&n++,o=!1;else if("\\"===t)o=!0;else if(i&&t===i)i=void 0,a.push(r),r="";else if(i)r+=t;else if("'"===t||'"'===t)i=t;else if(" "===t||" "===t||"\t"===t)r.length&&(a.push(r),r="");else{if("\n"===t||"\r"===t)break;r+=t}}if(i||o)return;if(r.length&&a.push(r),!a.length)continue;const c=a.shift();t.push({args:a,program:c})}return t.length?t:void 0}function t(e,t,s){const n=document.createElement(e);return i(n,s),t&&(n.className=t),n}var s=(e,s)=>t("div",e,s),n=(e,s)=>t("span",e,s);function i(e,t){if("string"==typeof t)e.append(t);else if("number"==typeof t)e.append(`${t}`);else if(t instanceof Node)e.append(t);else if(t instanceof HTMLCollection)for(const s of Array.from(t))e.append(s);else if(Array.isArray(t))for(const s of t)i(e,s)}var o=e=>e.replaceChildren();var r=location.href,a="https://github.com/wide-video/app-ffmpeg/",c="https://ffmpeg.org",m="https://github.com/FFmpeg/FFmpeg/blob/master/COPYING.GPLv3",l="ffmpeg-wasm-0.9.2",p="ffmpegWorker",d={wasm:"ffmpeg-gpl-simd.wasm",main:"ffmpeg-gpl-simd-wv.js"},u={FFMPEG_MAIN_URL:"https://cdn.wide.video/ffmpeg/0.9.2/ffmpeg-lgpl-simd-wv.js",FFMPEG_WASM_URL:"https://cdn.wide.video/ffmpeg/0.9.2/ffmpeg-lgpl-simd.wasm"},h={DIR:"asset",FILES:["concat.txt","input.jpg","input.mp4","logo.png","script.txt"]},f={Discord:"https://discord.gg/Q54kW97yj5",Facebook:"https://www.facebook.com/fb.wide.video",Reddit:"https://www.reddit.com/r/widevideo",TikTok:"https://www.tiktok.com/@wide.video",X:"https://x.com/wide_video",YouTube:"https://www.youtube.com/@wide-video"};function g(e){return""===e?'""':e.includes("'")||e.includes('"')?JSON.stringify(e):e.replaceAll(/(\s)/g,"\\$1")}var v="    ",y="\n",b=`${y}${v}`,w=`${b}${v}`,$=`${y}${b}`,x=`${y}${y}`,S="> ";function L(e,t,s){const i=s?[S]:[];if(t){const{args:e,program:s}=t;i.push(n("program",s));for(const t of e){const e=n("arg",g(t));isNaN(Number(t))?t.startsWith("-")&&e.classList.add("modifier"):e.classList.add("number"),i.push(" ",e)}}else i.push(e);return n("command",i)}var T=(e,t)=>`<a href="${e}" target="_blank">${t}</a>`,E=(e,t)=>T(e,`<strong>${t}</strong>`);function M(e,t,s){if(!e?.length)return;const{fileSystem:n,shell:i,terminal:o}=t;n.addFiles(e),o.stdout(`Added ${e.length} files:`),F([...e].map((e=>e.name)),i,s)}var k=(e,t,s,n)=>s.subprocess(`fetch ${e} ${t}`,n),F=(e,t,s)=>t.subprocess(`ls ${R(e)}`,s),R=e=>e.map((e=>g(e))).join(" "),A=class{name;alias;system;constructor(e,t){this.name=e,this.system=t}run(e,t){throw`Program ${this.name} not implemented.`}help(){throw`Help for ${this.name} is not available.`}commandToHTMLElements(t){const s=e(t),n=[];if(s)for(const e of s)n.push(L(t,e));else n.push(L(t,void 0));return n}commandToHTMLStrings(e){return this.commandToHTMLElements(e).map((e=>e.outerHTML))}manTemplate(e){const{alias:t,name:s}=this,n=[{name:"NAME",content:[this.commandToHTMLStrings(s)[0]+(t?.length?` (${t.map((e=>this.commandToHTMLStrings(e)[0])).join(", ")})`:"")]}],{description:i,examples:o}=e;return i?.length&&n.push({name:"DESCRIPTION",content:i}),o?.length&&n.push({name:"EXAMPLES",content:o.map((({command:e,description:t})=>`${t}${b}${this.commandToHTMLStrings(e).join(b)}`))}),n}joinSections(e){return e.map((({name:e,content:t})=>`<strong>${e}</strong>${b}${t.join($)}`)).join(x)}},C=class extends A{constructor(e){super("add",e)}async run(e,t){let s;if("function"==typeof showOpenFilePicker)try{s=await async function(e){const t=await showOpenFilePicker(e),s=[];for(const e of t)"file"===e.kind&&s.push(e.getFile());return Promise.all(s)}({multiple:!0})}catch(e){if(!(e instanceof DOMException&&"SecurityError"===e.name))throw e;s=await j({multiple:!0})}else s=await j({multiple:!0});M(s,this.system,t)}help(){return this.joinSections(this.manTemplate({description:["Adds files to the virtual file system."]}))}};function j(e){return new Promise(((s,n)=>{const i=new AbortController,o=i.signal,r=t("input",a);var a;r.type="file",e?.multiple&&(r.multiple=e.multiple),e?.types?.length&&(r.accept="",e.types.forEach((e=>Object.keys(e.accept).forEach((t=>r.accept+=`${t},${e.accept[t]?.join(",")}`))))),r.addEventListener("change",(()=>{i.abort(),s(r.files?.length?Array.from(r.files):[])}),{signal:o}),document.body.addEventListener("mousemove",(()=>setTimeout((()=>{i.abort(),n("The user aborted a request.")}),500)),{signal:o}),window.addEventListener("focus",(()=>setTimeout((()=>{i.abort(),n("The user aborted a request.")}),500)),{signal:o}),r.click()}))}var I=class extends A{constructor(e){super("bootstrap",e)}run(e){const t=this.system.terminal,s=e.includes("-quiet");let i=[this.check("Web Workers","https://caniuse.com/webworkers","function"==typeof Worker),this.check("cross-origin isolation","https://web.dev/articles/cross-origin-isolation-guide","function"==typeof SharedArrayBuffer),this.check("Fixed-width SIMD","https://webassembly.org/features/",O())];s&&(i=i.filter((e=>!e.success)));const o=n();if(o.innerHTML=i.map((e=>e.message)).join(y),i.find((e=>!e.success)))throw o;t.stdout(o)}check(e,t,s){return{message:`Checking ${T(t,e)}${"".padEnd(24-e.length," ")} ${s?"OK":"FAIL"}`,success:s}}help(){return this.joinSections(this.manTemplate({description:["Checks system dependencies to ensure that all necessary features are available."],examples:[{description:"Avoid printing except in cases of check failures.",command:"bootstrap -quiet"}]}))}};function O(){try{return WebAssembly.validate(new Uint8Array([0,97,115,109,1,0,0,0,1,5,1,96,0,1,123,3,2,1,0,10,10,1,8,0,65,0,253,15,253,98,11]))}catch(e){return!1}}var P=class extends A{constructor(e){super("clear",e)}run(){this.system.terminal.clear()}help(){return this.joinSections(this.manTemplate({description:["Clears the terminal content."]}))}},N=class extends A{constructor(e){super("cp",e)}run(e){const{fileSystem:t,terminal:s}=this.system,n=e[0]??"",i=e[1]??"";t.copy(n,i),s.stdout(`${n} was copied into ${i}`)}help(){return this.joinSections(this.manTemplate({description:["Copies files within the virtual file system:"],examples:[{description:"Copies file a.mp4 to b.mp4:",command:`${this.name} a.mp4 b.mp4`}]}))}},H=(e,t)=>new Blob([e],t?{type:t}:void 0),U=new WeakMap,D=new FinalizationRegistry((e=>URL.revokeObjectURL(e)));function _(e){const t=U.get(e);if(t)return t;const s=URL.createObjectURL(e);return U.set(e,s),D.register(e,s),s}var W={apng:"image/apng",avif:"image/avif",bmp:"image/bmp",gif:"image/gif",js:"text/javascript",jpeg:"image/jpeg",jpg:"image/jpeg",mkv:"video/x-matroska",mp3:"audio/mpeg",mp4:"video/mp4",ogg:"video/ogg",png:"image/png",svg:"image/svg+xml",wasm:"application/wasm",wav:"audio/wav",webm:"video/webm",webp:"image/webp"};var G=e=>e.type===W.mkv?H(e,W.webm):e,V=class extends A{constructor(e){super("embed",e)}run(e){const{name:n,system:{fileSystem:i,terminal:o}}=this;if(!e.length)return;const r=s(n);for(const s of e){const e=G(i.get(s)),n=t("iframe",void 0);n.src=_(e),n.addEventListener("load",(()=>{const e=n.contentDocument?.body?.firstElementChild;if("IMG"===e?.tagName){const t=e;t.style.maxWidth="100%",t.style.maxHeight="100%",t.clientWidth<n.clientWidth?n.style.width=`${t.clientWidth}px`:t.clientHeight<n.clientHeight&&(n.style.height=`${t.clientHeight}px`)}})),r.append(n)}o.stdout(r)}help(){return this.joinSections(this.manTemplate({description:["Displays the file in the terminal."],examples:[{description:"Play video.mp4:",command:`${this.name} video.mp4`}]}))}},q=h.DIR,B=(h.FILES,l),z=e=>K(`${q}/${e}`),Y=e=>K(`${e}`),K=e=>new URL(e,r).href;function J(e){try{return new URL(e,r).pathname.split("/").pop()}catch(e){return}}var X=class extends A{constructor(e){super("fetch",e)}async run(e,t){const{fileSystem:s,terminal:n}=this.system,[i,o]=e;if(!i)throw"Missing url";try{const e=o||J(i)||"download.bin",r=await fetch(i,{signal:t});if(!r.ok)throw`Failed to Fetch: ${r.status} ${r.statusText}`;const a=r.headers,c=a.get("x-decompressed-content-length")??a.get("x-amz-decoded-content-length")??a.get("x-content-length")??a.get("content-length")??"?";let m=0;const l=new Response(new ReadableStream({async start(t){const s=r.body.getReader();for(;;){const{done:i,value:o}=await s.read();if(i)break;m+=o.byteLength,n.clearLine("fetch-progress"),n.stdout(`Fetching ${e}: ${m} bytes of ${c} loaded.`,"fetch-progress"),t.enqueue(o)}t.close()}}));let p=await l.blob();t.throwIfAborted(),n.clearLine("fetch-progress"),n.stdout(`Fetching ${e}: ${m} bytes loaded successfully.`);const d=p.type||function(e){const t=e.lastIndexOf(".");return-1!==t?W[e.substring(t+1).toLowerCase()]:void 0}(e);d!==p.type&&(p=H(p,d)),s.add(e,p)}catch(e){throw t.throwIfAborted(),e}}help(){const e=this.name;return this.joinSections(this.manTemplate({description:["Downloads a file from a URL into the virtual file system."],examples:[{description:"Download url:",command:`${e} https://mydomain.com/video.mp4`},{description:"Download url as video.mp4:",command:`${e} https://mydomain.com/xyz video.mp4`}]}))}},Q=document.getElementById(p).textContent,Z=new Blob([Q],{type:"text/javascript"}),ee=URL.createObjectURL(Z),te=class extends A{constructor(e){super("ffmpeg",e)}run(e,t){return new Promise((async(s,n)=>{const{env:i,fileSystem:o,shell:r,terminal:a}=this.system,c={FFMPEG_MAIN_URL:i.FFMPEG_MAIN_URL,FFMPEG_WASM_URL:i.FFMPEG_WASM_URL};for(const[e,s]of Object.entries(c)){const i=J(s);if(!i)return n(`Filename not parsable from url ${s} set on variable ${e}.`);let a;try{a=o.get(i)}catch(e){try{await k(s,i,r,t),a=o.get(i)}catch(e){return n(e)}}c[e]=_(a)}const m=new Worker(ee,{type:"module"});t.addEventListener("abort",(()=>{se(m),n(t.reason)}));const l=new TextDecoder("utf8"),p={stderr:"",stdout:""};m.onerror=e=>{se(m),n(`Unexpected error: ${e.message}`)},m.onmessage=e=>{if(t.aborted)return;const i=e.data,c=i.kind;switch(c){case"stderr":case"stdout":for(p[c]+=l.decode(i.message);;){const e=p[c],t=e.indexOf("\n"),s=e.indexOf("\r");if(-1===t&&-1===s)break;const n=-1===t||-1!==s&&s<t?s:t;n===s&&a.clearLine(`ffmpeg-${c}`),a[c](e.substring(0,n),`ffmpeg-${c}`),p[c]=e.substring(n+1)}break;case"error":{se(m);const e=i.messageOrCode;if("string"==typeof e)return n(e);const t=`Process finished with exit code ${e}.`;if(-29===e)return n(`${t} This might be due to the output file already existing.`);n(t);break}case"success":{const e=i.files;if(se(m),o.addFiles(e),e.length){const s=4,n=e.filter((e=>e.type));n.length>s&&a.stdout(`Embedding ${Math.min(s,n.length)} of ${e.length} outputs:`),((e,t,s)=>{t.subprocess(`embed ${R(e)}`,s)})(n.slice(0,s).map((e=>e.name)),r,t)}s();break}}};const d={args:e,blobs:o.list,env:c};m.postMessage(d)}))}help(){const e=this.name;return this.joinSections(this.manTemplate({description:["Universal media converter"],examples:[{description:"Print a list of basic options available in FFmpeg:",command:`${e} -h`},{description:"Extract the first 10 frames of a video:",command:`${e} -i input.mp4 -vframes 10 output%03d.jpg`},{description:"Generate a demo video using the smptehdbars and sine filters:",command:`${e} -filter_complex "smptehdbars;sine=beep_factor=2" -t 5 output.mp4`},{description:"Split the audio and video into separate files:",command:`${e} -i input.mp4 -map 0:v -c:v copy output-video.mp4 -map 0:a -c:a copy output-audio.mp4`},{description:"Trim 15 seconds from a video without re-encoding:",command:`${e} -ss 00:00:10.000 -t 00:00:15.000 -i input.mp4 -c copy output.mp4`},{description:`Concatenate multiple video files quickly without re-encoding using concat.txt:${w}file 'input1.mp4'${w}file 'input2.mp4'`,command:`${e} -f concat -i concat.txt -c copy output.mp4`},{description:"Flip a video horizontally:",command:`${e} -i input.mp4 -vf hflip -c:a copy output.mp4`},{description:"Resize a video to a width of 1280 pixels while maintain the aspect ratio:",command:`${e} -i input.mp4 -filter:v scale=1280:-2 -c:a copy output.mp4`},{description:"Re-encode a video using HEVC (H.265) video codec and AC3 audio codec:",command:`${e} -i input.mp4 -c:v libx265 -vtag hvc1 -c:a ac3 output.mp4`},{description:"Add a watermark to a video:",command:`${e} -i input.mp4 -i logo.png -filter_complex overlay=x=50:y=50 output.mp4`},{description:"Bypass WASM memory limitations to generate output of several GBs in size:",command:`${e} -i input.mp4 -movflags empty_moov huge/output.mp4 -y`}]}))}};function se(e){setTimeout((()=>{try{e.terminate()}catch(e){}}),100)}var ne=class extends A{alias=["man"];constructor(e){super("help",e)}run(e){const{name:t,system:{shell:n,terminal:i}}=this,o=e[0],r=o?n.getProgram(o):void 0,a=s("help");a.innerHTML=r?r.help():this.joinSections(this.manTemplate({description:["Prints detailed help and examples for the specified program."],examples:[{description:"Print this help:",command:t},{description:`Print help for a program:${b}Available programs: ${n.programs.map((e=>this.commandToHTMLStrings(e.name)[0])).join(", ")}`,command:`${t} <program>`}]})),i.stdout(a)}},ie=class extends A{constructor(e){super("history",e)}run(){const e=this.system.terminal;for(const t of e.history.getList())for(const s of this.commandToHTMLElements(t))e.stdout(s)}help(){return this.joinSections(this.manTemplate({description:[`Prints the last ${this.system.terminal.history.max} executed commands.`]}))}},oe=class extends A{constructor(e){super("intro",e)}run(){const e=s("help");e.innerHTML=`\n${E(r,"FFmpeg Online")} powered by ${E("https://wide.video/","wide.video")} | Free Online Video Editor\n--------------------------------------------------------------\n\nRun ffmpeg directly in your browser with a terminal-like interface. No installations needed. Convert, edit, and process multimedia files with this powerful web-based tool.\n\n${this.joinSections([{name:"USAGE",content:[`1. Drag and drop files into the terminal or use the ${this.commandToHTMLStrings("add")} or ${this.commandToHTMLStrings("fetch")} command to populate the virtual file system.${b}2. Run ${this.commandToHTMLStrings("ffmpeg …")} command.${b}3. Save the generated output using the ${this.commandToHTMLStrings("save")} command.`,`Run ${this.commandToHTMLStrings("help")} for available commands.${b}Run ${this.commandToHTMLStrings("help ffmpeg")} for example ffmpeg commands.`,`Demo assets available for use: ${h.FILES.map((e=>T(z(e),e))).join(", ")}${w}${this.commandToHTMLStrings(`fetch ${z("input.mp4")}`)}`,`Explore ${T(a,"embedding and more")} features.`]},{name:"CONTACT",content:["Contact for help, feedback or discussion on "+Object.entries(f).map((([e,t])=>T(t,e))).join(", ")]},{name:"COPYRIGHT",content:[`This software uses code of ${T(c,"FFmpeg")} licensed under the ${T(m,"GPLv3")} and its source can be downloaded ${T(a,"here")}.`]}])}\n\n`,this.system.terminal.stdout(e)}},re=class extends A{constructor(e){super("ls",e)}run(e){const{fileSystem:t,terminal:s}=this.system;let n=t.list;if(e.length){const s=t.getFilenames(e);n=n.filter((({name:e})=>s.includes(e)))}for(const e of n)s.stdout(`${e.data.size}`.padStart(9)+` ${e.name}`)}help(){const e=this.name;return this.joinSections(this.manTemplate({description:["Prints details of files in the virtual file system."],examples:[{description:"All files:",command:e},{description:"File a.mp4 and b.mp4:",command:`${e} a.mp4 b.mp4`},{description:"All .mp4 files starting with output:",command:`${this.name} output*.mp4`}]}))}},ae=class extends A{constructor(e){super("mv",e)}run(e){const{fileSystem:t,terminal:s}=this.system,n=e[0];if(!n)throw"Filename missing.";const i=e[1];if(!i)throw"New filename missing.";t.rename(n,i),s.stdout(`${n} was renamed to ${i}`)}help(){return this.joinSections(this.manTemplate({description:["Renames (moves) files within the virtual file system."],examples:[{description:"Renames file a.mp4 to b.mp4:",command:`${this.name} a.mp4 b.mp4`}]}))}},ce=class extends A{constructor(e){super("open",e)}run(e){const{fileSystem:t}=this.system;for(const s of e){const e=G(t.get(s));open(_(e),"_blank")}}help(){return this.joinSections(this.manTemplate({description:["Opens a file in a new browser tab."],examples:[{description:"Open file video.mp4:",command:`${this.name} video.mp4`}]}))}},me=class extends A{constructor(e){super("save",e)}async run(e){const{fileSystem:t}=this.system;for(const s of e){const e=t.get(s);if("function"==typeof showSaveFilePicker)try{await le(s,e)}catch(t){if(!(t instanceof DOMException&&"SecurityError"===t.name))throw t;pe(s,e)}else pe(s,e)}}help(){return this.joinSections(this.manTemplate({description:["Saves files from the virtual file system to the regular file system."],examples:[{description:"Save files:",command:`${this.name} a.mp4 b.mp4`}]}))}};async function le(e,t){const s=await showSaveFilePicker({suggestedName:e}),n=await s.createWritable();await n.write(t),await n.close()}function pe(e,s){const n=t("a",i,o);var i,o;n.download=e,n.href=_(s),n.click()}var de=class extends A{constructor(e){super("set",e)}run(e){const{env:t,terminal:s}=this.system,n=e[0]??"";if(!n){for(const[e,n]of Object.entries(t))s.stdout(`${e}=${n}`);return}const i=e[1]??"";if(!i)throw"Value missing.";t[n]=i}help(){const e=this.name;return this.joinSections(this.manTemplate({description:["Displays, or sets environment variables:"],examples:[{description:"Display all variables:",command:e},{description:"Set value into variable:",command:`${e} MY_VARIABLE MY_VALUE`},{description:"Use LGPL FFmpeg:",command:Object.entries(u).map((([t,s])=>`${e} ${t} ${s}`)).join("\n")}]}))}},ue=class extends A{constructor(e){super("rm",e)}run(e){const{fileSystem:t,terminal:s}=this.system;for(const n of t.getFilenames(e))t.remove(n),s.stdout(`File ${n} was removed.`)}help(){return this.joinSections(this.manTemplate({description:["Removes files from the virtual file system."],examples:[{description:"Remove file video.mp4:",command:`${this.name} video.mp4`},{description:"Remove all .mp4 files starting with output:",command:`${this.name} output*.mp4`}]}))}},he=class{system;programs;controller;constructor(e,t){const s=this.system={env:e,fileSystem:t.fileSystem,shell:this,terminal:t},n=[C,I,P,N,V,X,te,ne,ie,oe,re,ae,ce,ue,me,de];this.programs=n.map((e=>new e(s))),t.init(this.process.bind(this),this.kill.bind(this))}getProgram(e){const t=this.programs,s=e.toLowerCase();for(const e of t)if(e.name===s)return e;for(const e of t)if(e.alias?.includes(s))return e}process(e,t=!0){if(this.controller)throw"Process in progress.";return this.run(e,new AbortController,t)}subprocess(e,t){return this.run(e,t)}kill(){this.controller?.abort("The terminal process was aborted."),this.controller=void 0}async run(t,s,n){const i=this.system.terminal,o=s instanceof AbortController?s:void 0,r=s instanceof AbortController?s.signal:s,a=e(t);let c;try{if(!a)throw n&&i.stdout(L(t,void 0,!0)),"Invalid command";o&&(this.controller=o);for(const e of a){c=n?i.stdout(L(t,e,!0)):void 0;const s=this.getProgram(e.program);if(!s)throw`Command not found: ${e.program}`;c?.setState("running"),await s.run(e.args,r),c?.setState("success")}}catch(e){throw c?.setState("error"),o&&i.stderr(e instanceof Element?e:`${e}`),e}finally{o===this.controller&&(this.controller=void 0)}}},fe="plaintext-only";function ge(e){const t=document.createRange();t.selectNodeContents(e),t.collapse();const s=getSelection();s?.removeAllRanges(),s?.addRange(t)}function ve(){scrollTo(0,document.body.scrollHeight)}var ye=["add","bootstrap","clear","cp","embed","fetch","ffmpeg","help","history","intro","ls","mv","open","rm","save","set"];function be(e,t){const s=getSelection();if(!s||"Caret"!==s.type)return;const n=e.textContent?.substring(0,s.anchorOffset);if(!n)return;const i=e.textContent?.substring(s.anchorOffset)??"",o=n.split(/(^|[^\\])\s+/).pop()??n,r=[];for(const e of ye)if(e.startsWith(n)){const t=e.substring(n.length);t&&r.push(t)}for(const e of t.fileSystem.list){const t=g(e.name);if(t.startsWith(o)){const e=t.substring(o.length);e&&r.push(e)}}let a=r[0];if(!a)return;for(const e of r){let t="";const s=Math.min(a.length,e.length);for(let n=0;n<s&&a[n]===e[n];n++)t+=a[n];if(a=t,!t)break}if(r.length>1&&(t.clearLine("autoComplete"),t.stdout(r.map((e=>`…${e.substring(a.length)}`)).filter((e=>e.length>1)).join(", "),"autoComplete")),!a)return;const c=`${n}${a}`;e.textContent=`${c}${i}`,function(e,t){try{const s=document.createRange();s.setEnd(e.childNodes[0],t),s.collapse();const n=getSelection();n?.removeAllRanges(),n?.addRange(s)}catch(e){}}(e,c.length)}var we=class{map={};get list(){return Object.entries(this.map).sort((([e],[t])=>e.localeCompare(t))).map((([e,t])=>({name:e,data:t})))}get(e){const t=this.map[e];if(!t)throw`File ${e} does not exist.`;return t}getFilenames(e){const t=[];e:for(const s of Object.keys(this.map))for(const n of e)if(s===n||s.match(new RegExp(`^${n.replace(/[-[\]{}()+?.,\\^$|#\s]/g,"\\$&").replaceAll("*",".+")}$`))){t.push(s);continue e}return t}add(e,t){this.map[e]=t}addFiles(e){for(const t of e)this.add(t.name,t)}copy(e,t){if(!e)throw"Source filename missing.";if(!t)throw"Target filename missing.";if(e===t)throw"Source and target filenames are equal.";this.add(t,this.get(e))}remove(e){this.get(e),delete this.map[e]}rename(e,t){this.copy(e,t),this.remove(e)}},$e="history",xe=class{max=50;list;index;constructor(){try{this.list=JSON.parse(localStorage?.getItem($e)??"[]")}catch(e){this.list=[]}this.index=this.list.length}getList(){return this.list}add(e){const{list:t,max:s}=this;t.push(e),t.length>s&&t.splice(0,t.length-s),this.index=t.length;try{localStorage.setItem($e,JSON.stringify(t))}catch(e){}}move(e){const{index:t,list:s}=this;return this.index=Math.min(Math.max(t+e,0),s.length),s[this.index]}},Se=class{element;constructor(e){this.element=e}setState(e){const{classList:t}=this.element;t.remove("running","success","error"),t.add(e)}},Le="entryKind",Te=class{history=new xe;fileSystem;root;log=s("log");input=n("input");prompt=s("prompt");kill=()=>{throw"Not Implemented"};execute=e=>{throw"Not Implemented"};constructor(e){const{input:t,log:s,prompt:i}=this;this.fileSystem=new we,this.root=e,function(e){try{e.contentEditable=fe}catch(t){e.contentEditable="true"}}(t),t.addEventListener("paste",this.onInputPaste.bind(this)),t.addEventListener("input",this.onInputInput.bind(this)),t.addEventListener("keydown",this.onInputKeyDown.bind(this)),i.append(n("prefix",S),t),o(e),e.append(s,i),e.addEventListener("mouseup",this.onRootMouseUp.bind(this))}init(e,t){this.execute=e,this.kill=t}focus(){this.input.focus()}clear(){o(this.log)}clearLine(e){const t=this.log.lastChild;t instanceof HTMLElement&&t.dataset[Le]===e&&t.remove()}stdout(e,t){return this.print(e,"stdout",t)}stderr(e,t){return this.print(e,"stderr",t)}submit(){const{history:e,input:t}=this,s=t.textContent;if(!s.trim())return this.stdout(S),void(t.textContent="");try{this.execute(s).catch((()=>{}))}catch(e){return}e.add(s),t.textContent=""}print(e,t,n){const{body:i,documentElement:o}=document,r=window.scrollY>=i.scrollHeight-o.clientHeight-10,a=s(t,e);return function(e,t,s){void 0===s?delete e.dataset[t]:e.dataset[t]=`${s}`}(a,Le,n),this.log.append(a),r&&ve(),new Se(a)}onInputPaste(e){!function(e){try{const{clipboardData:t,target:s}=e;if(s instanceof HTMLElement&&s.contentEditable===fe)return;if(!t)return;const n=t.getData("text/plain"),i=getSelection();if(!i?.rangeCount)return;i.deleteFromDocument(),i.getRangeAt(0).insertNode(document.createTextNode(n)),i.collapseToEnd(),e.preventDefault()}catch(e){}}(e),ve()}onInputInput(){ve()}onInputKeyDown(e){const{history:t,input:s}=this;switch(e.key){case"ArrowUp":(function(e){const t=getSelection();if(!t)return!1;try{const s=t.getRangeAt(0).getClientRects();if(s.length){const t=[...s].reduce(((e,t)=>Math.max(e,t.y)),Number.MIN_VALUE);return t===[...e.getClientRects()].reduce(((e,t)=>Math.min(e,t.y)),Number.MAX_VALUE)}}catch(e){}return!t.anchorOffset})(s)&&(e.preventDefault(),s.textContent=t.move(-1)??"",ge(s.lastChild??s),ve());break;case"ArrowDown":(function(e){const t=getSelection();if(!t)return!1;try{const s=t.getRangeAt(0).getClientRects();if(s.length){const t=[...s].reduce(((e,t)=>Math.min(e,t.y)),Number.MAX_VALUE);return t===[...e.getClientRects()].reduce(((e,t)=>Math.max(e,t.y)),Number.MIN_VALUE)}}catch(e){}return t.anchorOffset===(t.anchorNode?.textContent?.length??0)})(s)&&(e.preventDefault(),s.textContent=t.move(1)??"",ge(s.lastChild??s),ve());break;case"c":e.ctrlKey&&this.kill();break;case"Enter":e.preventDefault(),this.submit();break;case"Tab":e.preventDefault(),be(s,this)}}onRootMouseUp(e){e.stopPropagation(),"Caret"===getSelection()?.type&&this.focus()}},Ee=document.body,Me=document.getElementById("Terminal");async function ke(e,t){const s={FFMPEG_MAIN_URL:Y(d.main),FFMPEG_WASM_URL:Y(d.wasm)},n=new Te(Me),i=new he(s,n);n.focus(),Ee.addEventListener("drop",(e=>{e.preventDefault(),Ee.classList.remove("dragOver"),M(e.dataTransfer?.files,i.system,(new AbortController).signal)})),Ee.addEventListener("dragleave",(e=>{Ee===e.target&&Ee.classList.remove("dragOver")})),Ee.addEventListener("dragover",(e=>{e.preventDefault(),Ee.classList.add("dragOver")})),Ee.addEventListener("mouseup",n.focus.bind(n));try{await i.process("bootstrap -quiet",!1),await i.process(e,t)}catch(e){}}try{const{command:s,placeholder:n}=JSON.parse(decodeURIComponent(location.hash.substring(1))),i=n??s,r=e(i)?.map((e=>L(i,e)))??[L(i,void 0)],a=t("button","start");a.textContent="Click to Run",a.onclick=()=>ke(s,!0),o(Me),Me.append(...r,a)}catch(e){ke("intro",!1)}})();</script>
+</html>
